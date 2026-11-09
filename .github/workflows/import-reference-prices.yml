@@ -34,9 +34,8 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p data/source
-          find .source-lattab/lib/data -maxdepth 1 -type f \\
-            \( -name '*-price-reference-transactions.ts' -o -name '*-price-reference-locations.ts' \\) \\
-            -exec cp {} data/source/ \\
+          cp .source-lattab/lib/data/*-price-reference-transactions.ts data/source/
+          cp .source-lattab/lib/data/*-price-reference-locations.ts data/source/
             \;
           cp .source-lattab/lib/data/wilayas.ts data/source/
           cp .source-lattab/lib/types/price-reference.ts data/source/
