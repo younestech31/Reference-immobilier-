@@ -1,0 +1,46 @@
+name: Sync real-estate reference data
+
+on:
+  push:
+    branches:
+      - feature/import-reference-prices
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/import-reference-prices
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/checkout@v4
+        with:
+          repository: younestech31/Lattab
+          ref: main
+          path: .source-lattab
+          persist-credentials: false
+      - name: Copy source files
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p data/source
+          cp .source-lattab/lib/data/*-price-reference-transactions.ts data/source/
+          cp .source-lattab/lib/data/*-price-reference-locations.ts data/source/
+          cp .source-lattab/lib/data/wilayas.ts data/source/
+          cp .source-lattab/lib/types/price-reference.ts data/source/
+          count=$(find data/source -maxdepth 1 -type f -name '*-price-reference-*.ts' | wc -l)
+          test "$count" -eq 116
+          rm -rf .source-lattab
+      - name: Commit imported data
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/source
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "Import original real-estate reference data from Lattab"
+          git push origin HEAD:feature/import-reference-prices
