@@ -51,8 +51,11 @@ jobs:
         with:
           gradle-version: "9.6.0"
 
-      - name: Generate Gradle Wrapper
-        run: gradle wrapper --gradle-version 9.6.0 --distribution-type bin
+      - name: Verify Gradle Wrapper
+        run: |
+          test -x ./gradlew
+          test -f gradle/wrapper/gradle-wrapper.jar
+          test -f gradle/wrapper/gradle-wrapper.properties
 
       - name: Commit generated data and wrapper
         if: github.event_name != 'pull_request'
