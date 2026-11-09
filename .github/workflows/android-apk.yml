@@ -46,11 +46,6 @@ jobs:
       - name: Export and validate offline datasets
         run: npm run export:reference
 
-      - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v4
-        with:
-          gradle-version: "9.6.0"
-
       - name: Verify Gradle Wrapper
         run: |
           test -x ./gradlew
