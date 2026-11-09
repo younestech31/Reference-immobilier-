@@ -28,16 +28,16 @@ object ReferenceRepository {
         val regions = buildList {
             for (index in 0 until regionsArray.length()) {
                 val regionObject = regionsArray.getJSONObject(index)
-                val categories = ReferenceLabels.categoryOrder.mapNotNull { category ->
-                    val typesArray = regionObject.optJSONArray(category.first) ?: return@mapNotNull null
+                val categories = ReferenceLabels.categoryOrder.mapNotNull category@ { category ->
+                    val typesArray = regionObject.optJSONArray(category.first) ?: return@category null
                     val types = buildList {
                         for (typeIndex in 0 until typesArray.length()) {
                             val typeObject = typesArray.getJSONObject(typeIndex)
-                            val zones = ReferenceLabels.zoneOrder.mapNotNull { zone ->
-                                val rangeObject = typeObject.optJSONObject(zone.first) ?: return@mapNotNull null
+                            val zones = ReferenceLabels.zoneOrder.mapNotNull zone@ { zone ->
+                                val rangeObject = typeObject.optJSONObject(zone.first) ?: return@zone null
                                 val min = rangeObject.optDouble("min", Double.NaN)
                                 val max = rangeObject.optDouble("max", Double.NaN)
-                                if (!min.isFinite() || !max.isFinite()) return@mapNotNull null
+                                if (!min.isFinite() || !max.isFinite() || min <= 0.0 || max <= 0.0 || min > max) return@zone null
                                 PriceZoneOption(zone.first, zone.second, zone.third, PriceRange(min, max))
                             }
                             if (zones.isNotEmpty()) {
