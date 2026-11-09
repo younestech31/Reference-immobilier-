@@ -1,0 +1,89 @@
+name: Android APK
+on:
+  push:
+    branches:
+      - main
+      - feature/native-android-app
+    paths-ignore:
+      - "*.md"
+      - "docs/**"
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: android-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref || github.ref_name }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install data exporter
+        run: npm install --no-audit --no-fund
+
+      - name: Export and validate offline datasets
+        run: npm run export:reference
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "9.6.0"
+
+      - name: Generate Gradle Wrapper
+        run: gradle wrapper --gradle-version 9.6.0 --distribution-type bin
+
+      - name: Commit generated data and wrapper
+        if: github.event_name != 'pull_request'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add app/src/main/assets/reference gradlew gradlew.bat gradle/wrapper
+          if git diff --cached --quiet; then
+            echo "Generated files are already current."
+            exit 0
+          fi
+          git commit -m "Generate offline Android reference assets and Gradle wrapper"
+          git push origin HEAD:"${GITHUB_REF_NAME}"
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Accept Android SDK licenses and install SDK
+        run: |
+          yes | sdkmanager --licenses >/dev/null || true
+          sdkmanager "platforms;android-37" "build-tools;36.0.0" "platform-tools"
+
+      - name: Run unit tests and build debug APK
+        run: ./gradlew --no-daemon testDebugUnitTest assembleDebug
+
+      - name: Upload debug APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: algerian-real-estate-reference-debug
+          path: app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
+          retention-days: 30
