@@ -46,11 +46,14 @@ function validateRanges(value, location, counts, warnings) {
       Object.prototype.hasOwnProperty.call(value, "max")) {
     const min = value.min;
     const max = value.max;
-    if (!Number.isFinite(min) || !Number.isFinite(max) || min <= 0 || max <= 0) {
-      throw new Error("Non-numeric or non-positive range at " + location + ": " + JSON.stringify(value));
+    if (!Number.isFinite(min) || !Number.isFinite(max)) {
+      throw new Error("Non-numeric range at " + location + ": " + JSON.stringify(value));
     }
     counts.ranges += 1;
-    if (min > max) warnings.push({ location, min, max, issue: "min-greater-than-max" });
+    if (min <= 0 || max <= 0 || min > max) {
+      const issue = min > max ? "min-greater-than-max" : "non-positive-bound";
+      warnings.push({ location, min, max, issue });
+    }
     return;
   }
   for (const [key, child] of Object.entries(value)) {
