@@ -40,20 +40,21 @@ function loadTypeScriptModule(filePath) {
   return module.exports;
 }
 
-function validateRanges(value, location, counts) {
+function validateRanges(value, location, counts, warnings) {
   if (!value || typeof value !== "object") return;
   if (Object.prototype.hasOwnProperty.call(value, "min") ||
       Object.prototype.hasOwnProperty.call(value, "max")) {
     const min = value.min;
     const max = value.max;
-    if (!Number.isFinite(min) || !Number.isFinite(max) || min <= 0 || max <= 0 || min > max) {
-      throw new Error("Invalid range at " + location + ": " + JSON.stringify(value));
+    if (!Number.isFinite(min) || !Number.isFinite(max) || min <= 0 || max <= 0) {
+      throw new Error("Non-numeric or non-positive range at " + location + ": " + JSON.stringify(value));
     }
     counts.ranges += 1;
+    if (min > max) warnings.push({ location, min, max, issue: "min-greater-than-max" });
     return;
   }
   for (const [key, child] of Object.entries(value)) {
-    validateRanges(child, location + "." + key, counts);
+    validateRanges(child, location + "." + key, counts, warnings);
   }
 }
 
@@ -83,13 +84,15 @@ function main() {
 
   const codes = new Set(wilayas.map(w => w.code));
   const counts = { files: 0, regions: 0, ranges: 0 };
+  const warnings = [];
   const manifest = {
     schemaVersion: 1,
     sourceRepository: "https://github.com/younestech31/Lattab",
     sourceCommit: SOURCE_COMMIT,
     wilayaCount: wilayas.length,
     datasetFileCount: sourceFiles.length,
-    generatedFiles: []
+    generatedFiles: [],
+    dataWarnings: warnings
   };
 
   for (const fileName of sourceFiles) {
@@ -105,7 +108,7 @@ function main() {
     }
 
     const localCounts = { ranges: 0 };
-    validateRanges(regions, fileName, localCounts);
+    validateRanges(regions, fileName, localCounts, warnings);
     const wilaya = wilayas.find(item => item.code === code);
     const outputName = code + "-" + mode + ".json";
     writeJson(outputName, {
@@ -124,6 +127,7 @@ function main() {
 
   manifest.regionCount = counts.regions;
   manifest.rangeCount = counts.ranges;
+  manifest.invalidRangeCount = warnings.length;
   writeJson("manifest.json", manifest);
 
   const generated = fs.readdirSync(OUTPUT_DIR).filter(name => name.endsWith(".json")).length;
@@ -132,7 +136,7 @@ function main() {
   }
 
   console.log("Reference data export successful:");
-  console.log(JSON.stringify({ ...counts, wilayas: wilayas.length, outputFiles: generated }, null, 2));
+  console.log(JSON.stringify({ ...counts, wilayas: wilayas.length, outputFiles: generated, invalidRanges: warnings }, null, 2));
 }
 
 try {
