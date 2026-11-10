@@ -3,6 +3,17 @@ plugins {
     id("org.jetbrains.kotlin.plugin.compose")
 }
 
+val stableDebugKeystorePath = System.getenv("ANDROID_DEBUG_KEYSTORE_PATH")
+val stableDebugKeystorePassword = System.getenv("ANDROID_DEBUG_KEYSTORE_PASSWORD")
+val stableDebugKeyAlias = System.getenv("ANDROID_DEBUG_KEY_ALIAS")
+val stableDebugKeyPassword = System.getenv("ANDROID_DEBUG_KEY_PASSWORD")
+val hasStableDebugSigning = listOf(
+    stableDebugKeystorePath,
+    stableDebugKeystorePassword,
+    stableDebugKeyAlias,
+    stableDebugKeyPassword
+).all { !it.isNullOrBlank() }
+
 android {
     namespace = "dz.referenceimmobilier"
     compileSdk = 36
@@ -16,9 +27,35 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs {
+        if (hasStableDebugSigning) {
+            create("stableDebug") {
+                storeFile = file(stableDebugKeystorePath!!)
+                storePassword = stableDebugKeystorePassword
+                keyAlias = stableDebugKeyAlias
+                keyPassword = stableDebugKeyPassword
+            }
+        }
+    }
+
     buildFeatures {
         compose = true
         buildConfig = true
+    }
+
+    buildTypes {
+        getByName("debug") {
+            // Use a persistent CI keystore when configured; otherwise fall back to
+            // Android's generated debug key for local development.
+            if (hasStableDebugSigning) {
+                signingConfig = signingConfigs.getByName("stableDebug")
+            }
+            // Google's official test native unit. Never request live ads from debug builds.
+            buildConfigField("String", "NATIVE_AD_UNIT_ID", "\"ca-app-pub-3940256099942544/2247696110\"")
+        }
+        getByName("release") {
+            buildConfigField("String", "NATIVE_AD_UNIT_ID", "\"ca-app-pub-4758243980765802/1545974700\"")
+        }
     }
 
     compileOptions {
@@ -41,8 +78,8 @@ dependencies {
     implementation("androidx.compose.material3:material3")
     implementation("androidx.compose.material:material-icons-extended")
 
-    // Google Mobile Ads SDK and consent management.
-    implementation("com.google.android.gms:play-services-ads:25.5.0")
+    // Google Mobile Ads Next-Gen SDK and consent management.
+    implementation("com.google.android.libraries.ads.mobile.sdk:ads-mobile-sdk:1.6.0")
     implementation("com.google.android.ump:user-messaging-platform:4.0.0")
 
     testImplementation("junit:junit:4.13.2")
