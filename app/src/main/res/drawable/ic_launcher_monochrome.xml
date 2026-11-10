@@ -4,27 +4,26 @@
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
-    <!-- Monochrome version for themed icons -->
     <path
-        android:pathData="M30,30 h48 v48 h-48 z"
+        android:pathData="M24,24 h60 v60 h-60 z"
         android:strokeWidth="5.5"
         android:strokeColor="#000000"
         android:fillColor="#00000000"
-        android:strokeLineJoin="miter"/>
+        android:strokeLineJoin="miter" />
     <path
-        android:pathData="M30,48 H78"
+        android:pathData="M24,46 H84"
         android:strokeWidth="4"
         android:strokeColor="#000000"
-        android:strokeLineCap="butt"/>
+        android:strokeLineCap="butt" />
     <path
-        android:pathData="M48,30 V78"
+        android:pathData="M46,24 V84"
         android:strokeWidth="4"
         android:strokeColor="#000000"
-        android:strokeLineCap="butt"/>
+        android:strokeLineCap="butt" />
     <path
-        android:pathData="M48,48 m-5.5,0 a5.5,5.5 0 1,0 11,0 a5.5,5.5 0 1,0 -11,0"
-        android:fillColor="#000000"/>
+        android:pathData="M46,46 m-6,0 a6,6 0 1,0 12,0 a6,6 0 1,0 -12,0"
+        android:fillColor="#000000" />
     <path
-        android:pathData="M64,64 h10 v10 h-10 z"
-        android:fillColor="#000000"/>
+        android:pathData="M68,68 h12 v12 h-12 z"
+        android:fillColor="#000000" />
 </vector>

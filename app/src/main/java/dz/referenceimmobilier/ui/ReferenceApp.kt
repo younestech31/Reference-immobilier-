@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dz.referenceimmobilier.data.*
 import dz.referenceimmobilier.domain.PriceCalculator
+import dz.referenceimmobilier.ui.components.BrandMark
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.text.NumberFormat
@@ -506,20 +507,10 @@ private fun Header(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(9.dp)
         ) {
-            Surface(
+            BrandMark(
                 modifier = Modifier.size(42.dp),
-                shape = MaterialTheme.shapes.large,
-                color = MaterialTheme.colorScheme.primary
-            ) {
-                Box(contentAlignment = Alignment.Center) {
-                    Text(
-                        "DZ",
-                        color = MaterialTheme.colorScheme.onPrimary,
-                        fontWeight = FontWeight.ExtraBold,
-                        style = MaterialTheme.typography.titleSmall
-                    )
-                }
-            }
+                contentDescription = tr("شعار المرجع العقاري", "Marque Reference Immobilier", isAr)
+            )
             Column(verticalArrangement = Arrangement.spacedBy(1.dp)) {
                 Text(
                     tr("المرجع العقاري", "Référence immobilière", isAr),

@@ -9,6 +9,7 @@ on:
       - feature/single-screen-no-scroll
       - feature/single-screen-ui-polish
       - feature/brand-identity
+      - fix/brand-identity-completion
     paths-ignore:
       - "*.md"
       - "docs/**"
