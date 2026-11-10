@@ -113,10 +113,8 @@ fun ReferenceApp(
                 Modifier.fillMaxSize()
                     .statusBarsPadding()
                     .navigationBarsPadding()
-                    .verticalScroll(rememberScrollState())
-                    .padding(horizontal = 18.dp)
-                    .padding(bottom = 28.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                    .padding(horizontal = 12.dp, vertical = 6.dp),
+                verticalArrangement = Arrangement.spacedBy(7.dp)
             ) {
                 Header(
                     isAr = isAr,
@@ -125,283 +123,255 @@ fun ReferenceApp(
                     onReset = { clearPropertySelection() }
                 )
 
-                HeroCard(isAr)
-
-                // The inline native ad is visually separated from the calculator controls.
-                NativeAdPlacement(
-                    canRequestAds = canRequestAds,
-                    isArabic = isAr
-                )
-
-                Column(verticalArrangement = Arrangement.spacedBy(9.dp)) {
-                    SectionHeading(
-                        number = "01",
-                        title = tr("نوع العملية", "Opération", isAr),
-                        subtitle = tr("اختر نوع المرجع الذي تريد الاطلاع عليه", "Choisissez le référentiel à consulter", isAr)
-                    )
-                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                        ModeCard(
-                            modifier = Modifier.weight(1f),
-                            selected = mode == ReferenceMode.SALE,
-                            title = tr("بيع", "Vente", isAr),
-                            subtitle = tr("القيم المرجعية للبيع", "Prix de vente", isAr),
-                            onClick = { modeName = "sale"; clearPropertySelection() }
+                Row(
+                    Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Button(
+                        onClick = { modeName = "sale"; clearPropertySelection() },
+                        modifier = Modifier.weight(1f).height(40.dp),
+                        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 0.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = if (mode == ReferenceMode.SALE) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant,
+                            contentColor = if (mode == ReferenceMode.SALE) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant
                         )
-                        ModeCard(
-                            modifier = Modifier.weight(1f),
-                            selected = mode == ReferenceMode.RENT,
-                            title = tr("إيجار", "Location", isAr),
-                            subtitle = tr("القيم المرجعية للإيجار", "Prix de location", isAr),
-                            onClick = { modeName = "rent"; clearPropertySelection() }
+                    ) { Text(tr("بيع", "Vente", isAr), fontWeight = FontWeight.Bold) }
+                    Button(
+                        onClick = { modeName = "rent"; clearPropertySelection() },
+                        modifier = Modifier.weight(1f).height(40.dp),
+                        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 0.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = if (mode == ReferenceMode.RENT) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant,
+                            contentColor = if (mode == ReferenceMode.RENT) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant
                         )
-                    }
+                    ) { Text(tr("إيجار", "Location", isAr), fontWeight = FontWeight.Bold) }
                 }
 
                 Card(
                     modifier = Modifier.fillMaxWidth(),
-                    shape = MaterialTheme.shapes.extraLarge,
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+                    shape = MaterialTheme.shapes.large,
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
                 ) {
-                    Column(Modifier.padding(18.dp), verticalArrangement = Arrangement.spacedBy(15.dp)) {
-                        SectionHeading(
-                            number = "02",
-                            title = tr("موقع العقار", "Localisation du bien", isAr),
-                            subtitle = tr("حدد الولاية ثم البلدية أو القطاع", "Sélectionnez la wilaya puis la commune ou le secteur", isAr)
-                        )
-
-                        ChoiceField(
-                            label = tr("الولاية", "Wilaya", isAr),
-                            value = wilayas.firstOrNull { it.code == wilayaCode }
-                                ?.let { if (isAr) it.nameAr else it.nameFr }.orEmpty(),
-                            options = wilayas.filter { it.isSupported }
-                                .map { it.code to if (isAr) it.nameAr else it.nameFr },
-                            enabled = wilayas.isNotEmpty(),
-                            isAr = isAr,
-                            onSelect = {
-                                wilayaCode = it
-                                regionName = ""
-                                clearPropertySelection()
+                    Column(
+                        Modifier.fillMaxWidth().padding(10.dp),
+                        verticalArrangement = Arrangement.spacedBy(7.dp)
+                    ) {
+                        Row(
+                            Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Box(Modifier.weight(1f)) {
+                                ChoiceField(
+                                    label = tr("الولاية", "Wilaya", isAr),
+                                    value = wilayas.firstOrNull { it.code == wilayaCode }
+                                        ?.let { if (isAr) it.nameAr else it.nameFr }.orEmpty(),
+                                    options = wilayas.filter { it.isSupported }
+                                        .map { it.code to if (isAr) it.nameAr else it.nameFr },
+                                    enabled = wilayas.isNotEmpty(),
+                                    isAr = isAr,
+                                    onSelect = {
+                                        wilayaCode = it
+                                        regionName = ""
+                                        clearPropertySelection()
+                                    }
+                                )
                             }
-                        )
-
-                        if (isLoading) {
-                            LoadingState(isAr)
-                        } else if (hasError) {
-                            ErrorState(
-                                isAr = isAr,
-                                onRetry = { retryToken += 1 }
-                            )
-                        } else {
-                            ChoiceField(
-                                label = tr("البلدية / المنطقة", "Commune / Secteur", isAr),
-                                value = region?.let { cleanRegion(it.commune) }.orEmpty(),
-                                options = dataset?.regions?.map { it.commune to cleanRegion(it.commune) }.orEmpty(),
-                                enabled = dataset?.regions?.isNotEmpty() == true,
-                                isAr = isAr,
-                                onSelect = {
-                                    regionName = it
-                                    clearPropertySelection()
-                                }
-                            )
-                            Text(
-                                tr(
-                                    "البلديات المتاحة: ", "Communes disponibles : ", isAr
-                                ) + (dataset?.regions?.size ?: 0),
-                                style = MaterialTheme.typography.labelSmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
+                            Box(Modifier.weight(1f)) {
+                                ChoiceField(
+                                    label = tr("البلدية / المنطقة", "Commune / Secteur", isAr),
+                                    value = region?.let { cleanRegion(it.commune) }.orEmpty(),
+                                    options = dataset?.regions?.map { it.commune to cleanRegion(it.commune) }.orEmpty(),
+                                    enabled = !isLoading && !hasError && dataset?.regions?.isNotEmpty() == true,
+                                    isAr = isAr,
+                                    onSelect = {
+                                        regionName = it
+                                        clearPropertySelection()
+                                    }
+                                )
+                            }
                         }
-                    }
-                }
 
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = MaterialTheme.shapes.extraLarge,
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
-                ) {
-                    Column(Modifier.padding(18.dp), verticalArrangement = Arrangement.spacedBy(15.dp)) {
-                        SectionHeading(
-                            number = "03",
-                            title = tr("خصائص العقار", "Caractéristiques du bien", isAr),
-                            subtitle = tr("اختر الطبيعة والصنف والمنطقة العمرانية", "Précisez la nature, le type et la zone", isAr)
-                        )
+                        Row(
+                            Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Box(Modifier.weight(1f)) {
+                                ChoiceField(
+                                    label = tr("طبيعة العقار", "Nature", isAr),
+                                    value = category?.let { if (isAr) it.labelAr else it.labelFr }.orEmpty(),
+                                    options = region?.categories?.map { it.key to if (isAr) it.labelAr else it.labelFr }.orEmpty(),
+                                    enabled = region != null,
+                                    isAr = isAr,
+                                    onSelect = {
+                                        categoryKey = it
+                                        typeIndex = -1
+                                        zoneKey = ""
+                                        areaText = ""
+                                    }
+                                )
+                            }
+                            Box(Modifier.weight(1f)) {
+                                ChoiceField(
+                                    label = tr("صنف العقار", "Type de bien", isAr),
+                                    value = propertyType?.label.orEmpty(),
+                                    options = category?.types?.mapIndexed { index, entry -> index.toString() to entry.label }.orEmpty(),
+                                    enabled = category != null,
+                                    isAr = isAr,
+                                    onSelect = {
+                                        typeIndex = it.toIntOrNull() ?: -1
+                                        zoneKey = ""
+                                        areaText = ""
+                                    }
+                                )
+                            }
+                        }
 
-                        if (isLoading || hasError) {
-                            Text(
-                                tr("ستظهر الخيارات بعد تحميل بيانات الولاية.", "Les options apparaîtront après le chargement des données.", isAr),
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        } else {
-                            ChoiceField(
-                                label = tr("طبيعة العقار", "Nature du bien", isAr),
-                                value = category?.let { if (isAr) it.labelAr else it.labelFr }.orEmpty(),
-                                options = region?.categories?.map { it.key to if (isAr) it.labelAr else it.labelFr }.orEmpty(),
-                                enabled = region != null,
-                                isAr = isAr,
-                                onSelect = {
-                                    categoryKey = it
-                                    typeIndex = -1
-                                    zoneKey = ""
-                                    areaText = ""
-                                }
-                            )
-                            ChoiceField(
-                                label = tr("صنف العقار", "Type de bien", isAr),
-                                value = propertyType?.label.orEmpty(),
-                                options = category?.types?.mapIndexed { index, entry -> index.toString() to entry.label }.orEmpty(),
-                                enabled = category != null,
-                                isAr = isAr,
-                                onSelect = {
-                                    typeIndex = it.toIntOrNull() ?: -1
-                                    zoneKey = ""
-                                    areaText = ""
-                                }
-                            )
-                            ChoiceField(
-                                label = tr("المنطقة العمرانية", "Zone", isAr),
-                                value = zone?.let { if (isAr) it.labelAr else it.labelFr }.orEmpty(),
-                                options = propertyType?.zones?.map { it.key to if (isAr) it.labelAr else it.labelFr }.orEmpty(),
-                                enabled = propertyType != null,
-                                isAr = isAr,
-                                onSelect = {
-                                    zoneKey = it
-                                    areaText = ""
-                                }
-                            )
-
+                        Row(
+                            Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.Bottom,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Box(Modifier.weight(1f)) {
+                                ChoiceField(
+                                    label = tr("المنطقة", "Zone", isAr),
+                                    value = zone?.let { if (isAr) it.labelAr else it.labelFr }.orEmpty(),
+                                    options = propertyType?.zones?.map { it.key to if (isAr) it.labelAr else it.labelFr }.orEmpty(),
+                                    enabled = propertyType != null,
+                                    isAr = isAr,
+                                    onSelect = {
+                                        zoneKey = it
+                                        areaText = ""
+                                    }
+                                )
+                            }
                             OutlinedTextField(
                                 value = areaText,
                                 onValueChange = {
                                     areaText = it.filter { char -> char.isDigit() || char == '.' || char == ',' }.take(14)
                                 },
-                                modifier = Modifier.fillMaxWidth(),
+                                modifier = Modifier.weight(1f),
                                 enabled = zone != null,
                                 singleLine = true,
                                 shape = MaterialTheme.shapes.large,
                                 label = {
                                     Text(
                                         if (propertyType?.unit?.contains("Ha", true) == true)
-                                            tr("المساحة بالهكتار (Ha)", "Superficie en hectares (Ha)", isAr)
-                                        else tr("المساحة بالمتر المربع (m²)", "Superficie en mètres carrés (m²)", isAr)
+                                            tr("المساحة (Ha)", "Surface (Ha)", isAr)
+                                        else tr("المساحة (m²)", "Surface (m²)", isAr)
                                     )
                                 },
-                                placeholder = { Text(tr("مثال: 120", "Ex. : 120", isAr)) },
-                                leadingIcon = {
-                                    Text(
-                                        if (propertyType?.unit?.contains("Ha", true) == true) "Ha" else "m²",
-                                        style = MaterialTheme.typography.labelLarge,
-                                        color = MaterialTheme.colorScheme.primary,
-                                        fontWeight = FontWeight.Bold
-                                    )
-                                },
+                                placeholder = { Text("120") },
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal)
                             )
-
-                            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(7.dp)) {
-                                Icon(
-                                    Icons.Default.Info,
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.secondary,
-                                    modifier = Modifier.size(16.dp)
-                                )
-                                Text(
-                                    tr(
-                                        "تُحفظ وحدة القياس الأصلية في المرجع، بما فيها الهكتار.",
-                                        "L'unité d'origine du référentiel est conservée, y compris l'hectare.",
-                                        isAr
-                                    ),
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                            }
                         }
                     }
                 }
 
-                if (estimate != null && zone != null && propertyType != null) {
-                    ResultCard(
-                        result = estimate,
-                        zone = zone,
-                        type = propertyType,
-                        mode = mode,
-                        area = area ?: 0.0,
-                        ar = isAr,
-                        onCopy = {
-                            val message = shareText(region, propertyType, zone, estimate, area ?: 0.0, mode, isAr)
-                            val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                            clipboard.setPrimaryClip(ClipData.newPlainText("Reference estimate", message))
-                            Toast.makeText(
-                                context,
-                                tr("تم نسخ النتيجة", "Résultat copié", isAr),
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        },
-                        onShare = {
-                            val intent = Intent(Intent.ACTION_SEND).apply {
-                                type = "text/plain"
-                                putExtra(
-                                    Intent.EXTRA_TEXT,
-                                    shareText(region, propertyType, zone, estimate, area ?: 0.0, mode, isAr)
-                                )
-                            }
-                            context.startActivity(
-                                Intent.createChooser(intent, tr("مشاركة النتيجة", "Partager le résultat", isAr))
-                            )
-                        }
-                    )
-                } else if (zone != null && areaText.isNotBlank() &&
-                    (area == null || !area.isFinite() || area <= 0.0)
-                ) {
-                    AreaValidationCard(isAr)
-                } else {
-                    GuidanceCard(isAr)
+                if (isLoading) {
+                    LinearProgressIndicator(Modifier.fillMaxWidth())
+                } else if (hasError) {
+                    Row(
+                        Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(tr("تعذر تحميل البيانات", "Chargement impossible", isAr), color = MaterialTheme.colorScheme.error)
+                        TextButton(onClick = { retryToken += 1 }) { Text(tr("إعادة المحاولة", "Réessayer", isAr)) }
+                    }
                 }
 
-                DisclaimerCard(isAr)
-
-                Column(
-                    Modifier.fillMaxWidth().padding(top = 3.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(4.dp)
-                ) {
+                if (estimate != null && zone != null && propertyType != null) {
+                    Card(
+                        Modifier.fillMaxWidth(),
+                        shape = MaterialTheme.shapes.large,
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary)
+                    ) {
+                        Column(
+                            Modifier.fillMaxWidth().padding(horizontal = 14.dp, vertical = 10.dp),
+                            verticalArrangement = Arrangement.spacedBy(5.dp)
+                        ) {
+                            Text(
+                                tr("القيمة الإجمالية التقديرية", "Valeur totale estimative", isAr),
+                                color = Color.White.copy(alpha = 0.9f),
+                                style = MaterialTheme.typography.labelMedium
+                            )
+                            Text(
+                                formatNumber(estimate.totalMin, isAr) + " – " + formatNumber(estimate.totalMax, isAr) + if (isAr) " دج" else " DZD",
+                                color = Color.White,
+                                style = MaterialTheme.typography.titleLarge,
+                                fontWeight = FontWeight.ExtraBold,
+                                maxLines = 1
+                            )
+                            Text(
+                                tr("سعر الوحدة: ", "Prix unitaire : ", isAr) +
+                                    formatNumber(estimate.unitMin, isAr) + " – " + formatNumber(estimate.unitMax, isAr) +
+                                    if (propertyType.unit.contains("Ha", true)) " / Ha" else " / m²",
+                                color = Color.White.copy(alpha = 0.9f),
+                                style = MaterialTheme.typography.bodySmall,
+                                maxLines = 1
+                            )
+                            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                TextButton(
+                                    onClick = {
+                                        val message = shareText(region, propertyType, zone, estimate, area ?: 0.0, mode, isAr)
+                                        val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                                        clipboard.setPrimaryClip(ClipData.newPlainText("Reference estimate", message))
+                                        Toast.makeText(context, tr("تم نسخ النتيجة", "Résultat copié", isAr), Toast.LENGTH_SHORT).show()
+                                    },
+                                    colors = ButtonDefaults.textButtonColors(contentColor = Color.White)
+                                ) { Text(tr("نسخ النتيجة", "Copier", isAr)) }
+                                TextButton(
+                                    onClick = {
+                                        val intent = Intent(Intent.ACTION_SEND).apply {
+                                            type = "text/plain"
+                                            putExtra(Intent.EXTRA_TEXT, shareText(region, propertyType, zone, estimate, area ?: 0.0, mode, isAr))
+                                        }
+                                        context.startActivity(Intent.createChooser(intent, tr("مشاركة النتيجة", "Partager", isAr)))
+                                    },
+                                    colors = ButtonDefaults.textButtonColors(contentColor = Color.White)
+                                ) { Text(tr("مشاركة", "Partager", isAr)) }
+                            }
+                        }
+                    }
+                } else {
                     Text(
                         tr(
-                            "المرجع العقاري الجزائري",
-                            "Référentiel immobilier algérien",
+                            "اختر الولاية والبلدية ونوع العقار، ثم أدخل المساحة لعرض النتيجة.",
+                            "Choisissez la wilaya, la commune et le type de bien, puis saisissez la superficie.",
                             isAr
                         ),
-                        style = MaterialTheme.typography.labelLarge,
-                        color = MaterialTheme.colorScheme.primary,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Text(
-                        tr(
-                            "بيانات مضمّنة • يعمل دون إنترنت",
-                            "Données intégrées • Fonctionne hors connexion",
-                            isAr
-                        ),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    Text(
-                        "Direction Générale des Impôts • Référentiel 2025–2026",
-                        style = MaterialTheme.typography.labelSmall,
+                        modifier = Modifier.fillMaxWidth(),
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.bodySmall,
                         textAlign = TextAlign.Center
                     )
-                    if (privacyOptionsRequired) {
-                        TextButton(onClick = onShowPrivacyOptions) {
-                            Text(
-                                tr(
-                                    "خيارات الخصوصية والإعلانات",
-                                    "Options de confidentialité et de publicité",
-                                    isAr
-                                )
-                            )
-                        }
+                }
+
+                Spacer(Modifier.weight(1f, fill = true))
+                Text(
+                    tr(
+                        "تقدير استرشادي وفق مرجع المديرية العامة للضرائب 2025–2026 • لا يمثل تقييماً فردياً أو سعراً ملزماً.",
+                        "Estimation indicative selon le référentiel DGI 2025–2026 • Ne constitue pas une évaluation individuelle.",
+                        isAr
+                    ),
+                    modifier = Modifier.fillMaxWidth(),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.labelSmall,
+                    textAlign = TextAlign.Center,
+                    maxLines = 2
+                )
+                Box(Modifier.fillMaxWidth().heightIn(max = 92.dp)) {
+                    NativeAdPlacement(
+                        canRequestAds = canRequestAds,
+                        isArabic = isAr
+                    )
+                }
+                if (privacyOptionsRequired) {
+                    TextButton(
+                        onClick = onShowPrivacyOptions,
+                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                    ) {
+                        Text(tr("خيارات الخصوصية والإعلانات", "Options de confidentialité et de publicité", isAr))
                     }
                 }
             }
