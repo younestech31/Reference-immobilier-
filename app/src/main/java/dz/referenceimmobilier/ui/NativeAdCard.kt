@@ -24,7 +24,6 @@ import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.AdLoader
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.LoadAdError
-import com.google.android.gms.ads.nativead.MediaView
 import com.google.android.gms.ads.nativead.NativeAd
 import com.google.android.gms.ads.nativead.NativeAdView
 import dz.referenceimmobilier.BuildConfig
@@ -130,7 +129,7 @@ private fun createNativeAdView(
     val content = LinearLayout(context).apply {
         orientation = LinearLayout.VERTICAL
         layoutDirection = if (isArabic) View.LAYOUT_DIRECTION_RTL else View.LAYOUT_DIRECTION_LTR
-        setPadding(dp(14), dp(14), dp(14), dp(14))
+        setPadding(dp(10), dp(8), dp(10), dp(8))
         isClickable = false
         isFocusable = false
     }
@@ -175,7 +174,7 @@ private fun createNativeAdView(
         LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT,
             LinearLayout.LayoutParams.WRAP_CONTENT
-        ).apply { bottomMargin = dp(10) }
+        ).apply { bottomMargin = dp(6) }
     )
 
     val titleRow = LinearLayout(context).apply {
@@ -192,8 +191,8 @@ private fun createNativeAdView(
         }
         titleRow.addView(
             iconView,
-            LinearLayout.LayoutParams(dp(48), dp(48)).apply {
-                if (isArabic) leftMargin = dp(10) else rightMargin = dp(10)
+            LinearLayout.LayoutParams(dp(36), dp(36)).apply {
+                if (isArabic) leftMargin = dp(8) else rightMargin = dp(8)
             }
         )
         adView.iconView = iconView
@@ -201,12 +200,14 @@ private fun createNativeAdView(
 
     val headlineView = TextView(context).apply {
         text = ad.headline
-        textSize = 17f
+        textSize = 15f
         setTextColor(textColor)
         typeface = Typeface.DEFAULT_BOLD
         textDirection = View.TEXT_DIRECTION_FIRST_STRONG
         gravity = if (isArabic) Gravity.RIGHT else Gravity.LEFT
-        setLineSpacing(dp(2).toFloat(), 1f)
+        maxLines = 2
+        ellipsize = android.text.TextUtils.TruncateAt.END
+        setLineSpacing(dp(1).toFloat(), 1f)
     }
     titleRow.addView(
         headlineView,
@@ -218,30 +219,15 @@ private fun createNativeAdView(
         LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT,
             LinearLayout.LayoutParams.WRAP_CONTENT
-        ).apply { bottomMargin = dp(10) }
-    )
-
-    val mediaView = MediaView(context).apply {
-        minimumHeight = dp(120)
-        setBackgroundColor(android.graphics.Color.TRANSPARENT)
-        layoutParams = LinearLayout.LayoutParams(
-            LinearLayout.LayoutParams.MATCH_PARENT,
-            dp(168)
-        )
-    }
-    adView.mediaView = mediaView
-    content.addView(
-        mediaView,
-        LinearLayout.LayoutParams(
-            LinearLayout.LayoutParams.MATCH_PARENT,
-            dp(168)
-        ).apply { bottomMargin = dp(10) }
+        ).apply { bottomMargin = dp(6) }
     )
 
     ad.body?.takeIf { it.isNotBlank() }?.let { body ->
         val bodyView = TextView(context).apply {
             text = body
-            textSize = 14f
+            textSize = 12f
+            maxLines = 2
+            ellipsize = android.text.TextUtils.TruncateAt.END
             setTextColor(secondaryTextColor)
             textDirection = View.TEXT_DIRECTION_FIRST_STRONG
             gravity = if (isArabic) Gravity.RIGHT else Gravity.LEFT
@@ -266,7 +252,7 @@ private fun createNativeAdView(
     ad.advertiser?.takeIf { it.isNotBlank() }?.let { advertiser ->
         val advertiserView = TextView(context).apply {
             text = advertiser
-            textSize = 12f
+            textSize = 11f
             setTextColor(secondaryTextColor)
             textDirection = View.TEXT_DIRECTION_FIRST_STRONG
         }
@@ -285,8 +271,8 @@ private fun createNativeAdView(
     val callToActionView = Button(context).apply {
         text = ad.callToAction
         isAllCaps = false
-        textSize = 14f
-        minHeight = dp(44)
+        textSize = 12f
+        minHeight = dp(36)
         setTextColor(android.graphics.Color.WHITE)
         backgroundTintList = android.content.res.ColorStateList.valueOf(primaryColor)
         // Deliberately no click listener: the registered NativeAdView asset handles clicks.
@@ -296,7 +282,7 @@ private fun createNativeAdView(
         callToActionView,
         LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.WRAP_CONTENT,
-            dp(48)
+            dp(38)
         )
     )
     content.addView(
@@ -307,7 +293,7 @@ private fun createNativeAdView(
         )
     )
 
-    // Register the native ad only after registering its media and other asset views.
+    // Register the native ad after all displayed assets have been registered.
     adView.setNativeAd(ad)
     return adView
 }
