@@ -137,26 +137,66 @@ fun ReferenceApp(
 
                 Card(
                     modifier = Modifier.fillMaxWidth(),
-                    shape = MaterialTheme.shapes.large,
+                    shape = MaterialTheme.shapes.extraLarge,
+                    border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
                     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
                 ) {
                     Column(
-                        Modifier.fillMaxWidth().padding(12.dp),
+                        Modifier.fillMaxWidth().padding(14.dp),
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                            Text(
-                                tr("تفاصيل العقار", "Détails du bien", isAr),
-                                style = MaterialTheme.typography.titleSmall,
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.onSurface
-                            )
-                            Text(
-                                tr("حدد الموقع والطبيعة والصنف والمساحة", "Précisez le lieu, la nature, le type et la surface", isAr),
-                                style = MaterialTheme.typography.labelSmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
+                        Row(
+                            Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(9.dp)
+                            ) {
+                                Surface(
+                                    modifier = Modifier.size(36.dp),
+                                    shape = MaterialTheme.shapes.medium,
+                                    color = MaterialTheme.colorScheme.primaryContainer
+                                ) {
+                                    Box(contentAlignment = Alignment.Center) {
+                                        Text(
+                                            "01",
+                                            color = MaterialTheme.colorScheme.primary,
+                                            style = MaterialTheme.typography.labelLarge,
+                                            fontWeight = FontWeight.ExtraBold
+                                        )
+                                    }
+                                }
+                                Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                                    Text(
+                                        tr("تفاصيل العقار", "Détails du bien", isAr),
+                                        style = MaterialTheme.typography.titleMedium,
+                                        fontWeight = FontWeight.Bold,
+                                        color = MaterialTheme.colorScheme.onSurface
+                                    )
+                                    Text(
+                                        tr("الموقع والمواصفات والمساحة", "Localisation, caractéristiques et surface", isAr),
+                                        style = MaterialTheme.typography.labelSmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                }
+                            }
+                            Surface(
+                                shape = MaterialTheme.shapes.large,
+                                color = MaterialTheme.colorScheme.secondaryContainer
+                            ) {
+                                Text(
+                                    tr("بيانات أساسية", "DONNÉES", isAr),
+                                    modifier = Modifier.padding(horizontal = 9.dp, vertical = 6.dp),
+                                    color = MaterialTheme.colorScheme.onSecondaryContainer,
+                                    style = MaterialTheme.typography.labelSmall,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
                         }
+                        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
                         Row(
                             Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -302,47 +342,74 @@ fun ReferenceApp(
                         Modifier.fillMaxWidth(),
                         shape = MaterialTheme.shapes.extraLarge,
                         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary),
-                        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+                        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp)
                     ) {
                         Column(
-                            Modifier.fillMaxWidth().padding(horizontal = 14.dp, vertical = 10.dp),
-                            verticalArrangement = Arrangement.spacedBy(5.dp)
+                            Modifier.fillMaxWidth().padding(horizontal = 14.dp, vertical = 12.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
                             Row(
+                                Modifier.fillMaxWidth(),
                                 verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(7.dp)
+                                horizontalArrangement = Arrangement.SpaceBetween
                             ) {
+                                Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                                    Text(
+                                        tr("نتيجة التقدير", "ESTIMATION", isAr),
+                                        color = Color.White.copy(alpha = 0.78f),
+                                        style = MaterialTheme.typography.labelSmall,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                    Text(
+                                        tr("القيمة الإجمالية التقديرية", "Valeur totale estimative", isAr),
+                                        color = Color.White,
+                                        style = MaterialTheme.typography.titleSmall,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
                                 Surface(
-                                    color = Color.White.copy(alpha = 0.16f),
-                                    shape = MaterialTheme.shapes.small
+                                    color = Color.White.copy(alpha = 0.14f),
+                                    shape = MaterialTheme.shapes.large
                                 ) {
                                     Text(
-                                        tr("النتيجة", "Résultat", isAr),
-                                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                                        tr("النتيجة", "RÉSULTAT", isAr),
+                                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 7.dp),
                                         color = Color.White,
                                         style = MaterialTheme.typography.labelSmall,
                                         fontWeight = FontWeight.Bold
                                     )
                                 }
-                                Text(
-                                    tr("القيمة الإجمالية التقديرية", "Valeur totale estimative", isAr),
-                                    color = Color.White.copy(alpha = 0.92f),
-                                    style = MaterialTheme.typography.labelMedium
-                                )
                             }
-                            Text(
-                                formatNumber(estimate.totalMin, isAr) + " – " + formatNumber(estimate.totalMax, isAr) + if (isAr) " دج" else " DZD",
+                            Surface(
+                                modifier = Modifier.fillMaxWidth(),
                                 color = Color.White,
-                                style = MaterialTheme.typography.titleLarge.copy(fontSize = 22.sp),
-                                fontWeight = FontWeight.ExtraBold,
-                                maxLines = 1
-                            )
+                                shape = MaterialTheme.shapes.large
+                            ) {
+                                Column(
+                                    Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 9.dp),
+                                    verticalArrangement = Arrangement.spacedBy(2.dp)
+                                ) {
+                                    Text(
+                                        tr("النطاق الإجمالي", "Fourchette totale", isAr),
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        style = MaterialTheme.typography.labelSmall
+                                    )
+                                    Text(
+                                        formatNumber(estimate.totalMin, isAr) + " – " + formatNumber(estimate.totalMax, isAr) + if (isAr) " دج" else " DZD",
+                                        color = MaterialTheme.colorScheme.primary,
+                                        style = MaterialTheme.typography.titleLarge.copy(fontSize = 22.sp),
+                                        fontWeight = FontWeight.ExtraBold,
+                                        maxLines = 1
+                                    )
+                                }
+                            }
                             Text(
                                 tr("سعر الوحدة: ", "Prix unitaire : ", isAr) +
                                     formatNumber(estimate.unitMin, isAr) + " – " + formatNumber(estimate.unitMax, isAr) +
                                     if (propertyType.unit.contains("Ha", true)) " / Ha" else " / m²",
-                                color = Color.White.copy(alpha = 0.9f),
+                                color = Color.White.copy(alpha = 0.92f),
                                 style = MaterialTheme.typography.bodySmall,
+                                fontWeight = FontWeight.SemiBold,
                                 maxLines = 1
                             )
                             Row(
@@ -385,32 +452,46 @@ fun ReferenceApp(
                     Card(
                         modifier = Modifier.fillMaxWidth(),
                         shape = MaterialTheme.shapes.large,
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.62f)
-                        )
+                        border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
                     ) {
                         Row(
-                            Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 10.dp),
+                            Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 9.dp),
                             verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(9.dp)
+                            horizontalArrangement = Arrangement.spacedBy(10.dp)
                         ) {
+                            Surface(
+                                modifier = Modifier.width(4.dp).height(40.dp),
+                                shape = MaterialTheme.shapes.extraLarge,
+                                color = MaterialTheme.colorScheme.secondary
+                            ) {}
+                            Column(
+                                modifier = Modifier.weight(1f),
+                                verticalArrangement = Arrangement.spacedBy(2.dp)
+                            ) {
+                                Text(
+                                    tr("ابدأ بتحديد العقار", "Commencez par décrire le bien", isAr),
+                                    color = MaterialTheme.colorScheme.onSurface,
+                                    style = MaterialTheme.typography.titleSmall,
+                                    fontWeight = FontWeight.Bold
+                                )
+                                Text(
+                                    tr(
+                                        "اختر الموقع والصنف والمنطقة، ثم أدخل المساحة لعرض النتيجة.",
+                                        "Choisissez le lieu, le type et la zone, puis saisissez la surface pour afficher le résultat.",
+                                        isAr
+                                    ),
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    style = MaterialTheme.typography.bodySmall,
+                                    textAlign = TextAlign.Start,
+                                    maxLines = 2
+                                )
+                            }
                             Icon(
                                 Icons.Default.Info,
                                 contentDescription = null,
                                 tint = MaterialTheme.colorScheme.primary,
-                                modifier = Modifier.size(20.dp)
-                            )
-                            Text(
-                                tr(
-                                    "اختر الموقع ونوع العقار والمنطقة، ثم أدخل المساحة لعرض النتيجة.",
-                                    "Choisissez le lieu, le type et la zone, puis saisissez la superficie pour afficher le résultat.",
-                                    isAr
-                                ),
-                                modifier = Modifier.weight(1f),
-                                color = MaterialTheme.colorScheme.onPrimaryContainer,
-                                style = MaterialTheme.typography.bodySmall,
-                                textAlign = TextAlign.Start,
-                                maxLines = 2
+                                modifier = Modifier.size(22.dp)
                             )
                         }
                     }
@@ -458,8 +539,10 @@ private fun ModeSelector(
 ) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        shape = MaterialTheme.shapes.large,
-        color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.75f)
+        shape = MaterialTheme.shapes.extraLarge,
+        color = MaterialTheme.colorScheme.surface,
+        border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+        shadowElevation = 1.dp
     ) {
         Row(
             Modifier.fillMaxWidth().padding(4.dp),
@@ -494,17 +577,32 @@ private fun ModeOption(
             role = Role.RadioButton,
             onValueChange = { isSelected -> if (isSelected) onClick() }
         ),
-        shape = MaterialTheme.shapes.medium,
+        shape = MaterialTheme.shapes.large,
         color = if (selected) MaterialTheme.colorScheme.primary else Color.Transparent,
-        contentColor = if (selected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant,
-        tonalElevation = if (selected) 1.dp else 0.dp
+        contentColor = if (selected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface,
+        tonalElevation = if (selected) 2.dp else 0.dp
     ) {
-        Box(contentAlignment = Alignment.Center) {
-            Text(text, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.labelLarge)
+        Row(
+            Modifier.fillMaxWidth().padding(horizontal = 10.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Surface(
+                modifier = Modifier.size(7.dp),
+                shape = MaterialTheme.shapes.extraLarge,
+                color = if (selected) Color.White else MaterialTheme.colorScheme.outline
+            ) {}
+            Spacer(Modifier.width(8.dp))
+            Text(
+                text,
+                fontWeight = if (selected) FontWeight.ExtraBold else FontWeight.SemiBold,
+                style = MaterialTheme.typography.titleSmall
+            )
         }
     }
 }
 
+// Branded single-screen header: visual identity without adding vertical scrolling.
 @Composable
 private fun Header(
     isAr: Boolean,
@@ -512,78 +610,79 @@ private fun Header(
     onLanguageChange: () -> Unit,
     onReset: () -> Unit
 ) {
-    Row(
-        Modifier.fillMaxWidth().padding(top = 4.dp, bottom = 2.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        shape = MaterialTheme.shapes.extraLarge,
+        color = MaterialTheme.colorScheme.primary,
+        shadowElevation = 2.dp
     ) {
         Row(
+            Modifier.fillMaxWidth().padding(horizontal = 11.dp, vertical = 10.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(9.dp)
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             BrandMark(
-                modifier = Modifier.size(42.dp),
+                modifier = Modifier.size(44.dp),
+                tint = MaterialTheme.colorScheme.primary,
+                containerColor = Color.White,
                 contentDescription = tr("شعار المرجع العقاري", "Marque Reference Immobilier", isAr)
             )
-            Column(verticalArrangement = Arrangement.spacedBy(1.dp)) {
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(2.dp)
+            ) {
                 Text(
                     tr("المرجع العقاري", "Référence immobilière", isAr),
                     fontWeight = FontWeight.ExtraBold,
-                    style = MaterialTheme.typography.titleSmall,
-                    color = MaterialTheme.colorScheme.onBackground
+                    style = MaterialTheme.typography.titleMedium,
+                    color = Color.White,
+                    maxLines = 1
                 )
                 Text(
-                    tr("الجزائر", "Algérie", isAr),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.labelSmall
+                    tr("مرجع الأسعار العقارية • الجزائر", "Référentiel des prix immobiliers • Algérie", isAr),
+                    color = Color.White.copy(alpha = 0.82f),
+                    style = MaterialTheme.typography.labelSmall,
+                    maxLines = 1
                 )
             }
-        }
-        Row(verticalAlignment = Alignment.CenterVertically) {
             Surface(
-                modifier = Modifier.heightIn(min = 48.dp).clickable(
+                modifier = Modifier.size(48.dp).clickable(
                     role = Role.Button,
                     onClickLabel = tr("إعادة ضبط الاختيارات", "Réinitialiser les sélections", isAr),
                     onClick = onReset
                 ),
-                shape = MaterialTheme.shapes.medium,
-                color = MaterialTheme.colorScheme.surfaceVariant
+                shape = MaterialTheme.shapes.large,
+                color = Color.White.copy(alpha = 0.14f)
             ) {
-                Row(
-                    Modifier.padding(horizontal = 9.dp, vertical = 8.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(5.dp)
-                ) {
+                Box(contentAlignment = Alignment.Center) {
                     Icon(
                         Icons.Default.Refresh,
                         contentDescription = null,
-                        modifier = Modifier.size(16.dp),
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    Text(
-                        tr("ضبط", "Reset", isAr),
-                        style = MaterialTheme.typography.labelSmall,
-                        fontWeight = FontWeight.SemiBold
+                        modifier = Modifier.size(20.dp),
+                        tint = Color.White
                     )
                 }
             }
-            Spacer(Modifier.width(6.dp))
             Surface(
                 modifier = Modifier.heightIn(min = 48.dp).widthIn(min = 48.dp).clickable(
                     role = Role.Button,
                     onClickLabel = tr("تغيير اللغة", "Changer de langue", isAr),
                     onClick = onLanguageChange
                 ),
-                shape = MaterialTheme.shapes.medium,
-                color = MaterialTheme.colorScheme.primaryContainer
+                shape = MaterialTheme.shapes.large,
+                color = Color.White
             ) {
-                Text(
-                    if (language == "ar") "FR" else "عربي",
-                    modifier = Modifier.padding(horizontal = 11.dp, vertical = 8.dp),
-                    color = MaterialTheme.colorScheme.onPrimaryContainer,
-                    fontWeight = FontWeight.ExtraBold,
-                    style = MaterialTheme.typography.labelMedium
-                )
+                Box(
+                    Modifier.padding(horizontal = 9.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        if (language == "ar") "FR" else "عربي",
+                        color = MaterialTheme.colorScheme.primary,
+                        fontWeight = FontWeight.ExtraBold,
+                        style = MaterialTheme.typography.labelLarge
+                    )
+                }
             }
         }
     }
@@ -801,12 +900,19 @@ private fun ChoiceField(
                 placeholder = {
                     Text(tr("اختر...", "Sélectionner...", isAr), style = MaterialTheme.typography.bodySmall)
                 },
+                textStyle = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
                 trailingIcon = {
-                    Icon(Icons.Default.ArrowDropDown, contentDescription = null)
+                    Icon(
+                        Icons.Default.ArrowDropDown,
+                        contentDescription = null,
+                        tint = if (enabled) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                 },
                 colors = OutlinedTextFieldDefaults.colors(
-                    unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.42f),
-                    focusedContainerColor = MaterialTheme.colorScheme.surface
+                    unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.72f),
+                    focusedContainerColor = MaterialTheme.colorScheme.surface,
+                    unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                    focusedBorderColor = MaterialTheme.colorScheme.primary
                 )
             )
             if (enabled) {
