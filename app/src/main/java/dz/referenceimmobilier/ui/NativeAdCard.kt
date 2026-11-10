@@ -20,16 +20,12 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.material3.MaterialTheme
-import com.google.android.gms.ads.AdListener
-import com.google.android.gms.ads.AdLoader
-import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.LoadAdError
-import com.google.android.gms.ads.nativead.NativeAd
-import com.google.android.gms.ads.nativead.NativeAdView
+import com.google.android.libraries.ads.mobile.sdk.common.LoadAdError
+import com.google.android.libraries.ads.mobile.sdk.nativead.NativeAd
+import com.google.android.libraries.ads.mobile.sdk.nativead.NativeAdLoader
+import com.google.android.libraries.ads.mobile.sdk.nativead.NativeAdLoaderCallback
+import com.google.android.libraries.ads.mobile.sdk.nativead.NativeAdRequest
 import dz.referenceimmobilier.BuildConfig
-
-private const val TEST_NATIVE_AD_UNIT_ID = "ca-app-pub-3940256099942544/2247696110"
-private const val LIVE_NATIVE_AD_UNIT_ID = "ca-app-pub-4758243980765802/8781466893"
 
 /**
  * A single inline native ad, placed between the introduction and the calculator form.
@@ -52,11 +48,16 @@ fun NativeAdPlacement(
 
     DisposableEffect(context, canRequestAds) {
         var isDisposed = false
-        val adUnitId = if (BuildConfig.DEBUG) TEST_NATIVE_AD_UNIT_ID else LIVE_NATIVE_AD_UNIT_ID
+        val adUnitId = BuildConfig.NATIVE_AD_UNIT_ID
 
-        val adLoader = AdLoader.Builder(context, adUnitId)
-            .forNativeAd { loadedAd ->
-                // The native advanced policy requires a visible title and call-to-action.
+        val adRequest = NativeAdRequest.Builder(
+            adUnitId,
+            listOf(NativeAd.NativeAdType.NATIVE)
+        ).build()
+
+        val adCallback = object : NativeAdLoaderCallback {
+            override fun onNativeAdLoaded(loadedAd: NativeAd) {
+                // The native advanced policy requires a visible headline and call-to-action.
                 if (isDisposed || loadedAd.headline.isNullOrBlank() ||
                     loadedAd.callToAction.isNullOrBlank()
                 ) {
@@ -66,14 +67,13 @@ fun NativeAdPlacement(
                     nativeAdState.value = loadedAd
                 }
             }
-            .withAdListener(object : AdListener() {
-                override fun onAdFailedToLoad(error: LoadAdError) {
-                    // Keep the calculator usable when ads are unavailable or the device is offline.
-                }
-            })
-            .build()
 
-        adLoader.loadAd(AdRequest.Builder().build())
+            override fun onAdFailedToLoad(error: LoadAdError) {
+                // Keep the calculator usable when ads are unavailable or the device is offline.
+            }
+        }
+
+        NativeAdLoader.load(adRequest, adCallback)
 
         onDispose {
             isDisposed = true
@@ -294,6 +294,6 @@ private fun createNativeAdView(
     )
 
     // Register the native ad after all displayed assets have been registered.
-    adView.setNativeAd(ad)
+    adView.registerNativeAd(ad, null)
     return adView
 }
