@@ -1,6 +1,8 @@
 package dz.referenceimmobilier.ui
 
 import android.graphics.Typeface
+import android.os.Handler
+import android.os.Looper
 import android.graphics.drawable.GradientDrawable
 import android.view.Gravity
 import android.view.View
@@ -58,14 +60,18 @@ fun NativeAdPlacement(
 
         val adCallback = object : NativeAdLoaderCallback {
             override fun onNativeAdLoaded(loadedAd: NativeAd) {
-                // The native advanced policy requires a visible headline and call-to-action.
-                if (isDisposed || loadedAd.headline.isNullOrBlank() ||
-                    loadedAd.callToAction.isNullOrBlank()
-                ) {
-                    loadedAd.destroy()
-                } else {
-                    nativeAdState.value?.destroy()
-                    nativeAdState.value = loadedAd
+                // GMA Next-Gen callbacks may run off the main thread. Compose state and
+                // Android views are touched only after posting to the UI thread.
+                Handler(Looper.getMainLooper()).post {
+                    // The native advanced policy requires a visible headline and call-to-action.
+                    if (isDisposed || loadedAd.headline.isNullOrBlank() ||
+                        loadedAd.callToAction.isNullOrBlank()
+                    ) {
+                        loadedAd.destroy()
+                    } else {
+                        nativeAdState.value?.destroy()
+                        nativeAdState.value = loadedAd
+                    }
                 }
             }
 
