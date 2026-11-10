@@ -113,7 +113,7 @@ fun ReferenceApp(
                 Modifier.fillMaxSize()
                     .statusBarsPadding()
                     .navigationBarsPadding()
-                    .padding(horizontal = 12.dp, vertical = 6.dp),
+                    .padding(horizontal = 14.dp, vertical = 4.dp),
                 verticalArrangement = Arrangement.spacedBy(7.dp)
             ) {
                 Header(
@@ -123,29 +123,12 @@ fun ReferenceApp(
                     onReset = { clearPropertySelection() }
                 )
 
-                Row(
-                    Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    Button(
-                        onClick = { modeName = "sale"; clearPropertySelection() },
-                        modifier = Modifier.weight(1f).height(40.dp),
-                        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 0.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = if (mode == ReferenceMode.SALE) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant,
-                            contentColor = if (mode == ReferenceMode.SALE) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    ) { Text(tr("بيع", "Vente", isAr), fontWeight = FontWeight.Bold) }
-                    Button(
-                        onClick = { modeName = "rent"; clearPropertySelection() },
-                        modifier = Modifier.weight(1f).height(40.dp),
-                        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 0.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = if (mode == ReferenceMode.RENT) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant,
-                            contentColor = if (mode == ReferenceMode.RENT) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    ) { Text(tr("إيجار", "Location", isAr), fontWeight = FontWeight.Bold) }
-                }
+                ModeSelector(
+                    isAr = isAr,
+                    isRent = mode == ReferenceMode.RENT,
+                    onSale = { modeName = "sale"; clearPropertySelection() },
+                    onRent = { modeName = "rent"; clearPropertySelection() }
+                )
 
                 Card(
                     modifier = Modifier.fillMaxWidth(),
@@ -153,9 +136,22 @@ fun ReferenceApp(
                     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
                 ) {
                     Column(
-                        Modifier.fillMaxWidth().padding(10.dp),
-                        verticalArrangement = Arrangement.spacedBy(7.dp)
+                        Modifier.fillMaxWidth().padding(12.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
+                        Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                            Text(
+                                tr("تفاصيل العقار", "Détails du bien", isAr),
+                                style = MaterialTheme.typography.titleSmall,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+                            Text(
+                                tr("حدد الموقع والطبيعة والصنف والمساحة", "Précisez le lieu, la nature, le type et la surface", isAr),
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
                         Row(
                             Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -244,25 +240,35 @@ fun ReferenceApp(
                                     }
                                 )
                             }
-                            OutlinedTextField(
-                                value = areaText,
-                                onValueChange = {
-                                    areaText = it.filter { char -> char.isDigit() || char == '.' || char == ',' }.take(14)
-                                },
-                                modifier = Modifier.weight(1f),
-                                enabled = zone != null,
-                                singleLine = true,
-                                shape = MaterialTheme.shapes.large,
-                                label = {
-                                    Text(
-                                        if (propertyType?.unit?.contains("Ha", true) == true)
-                                            tr("المساحة (Ha)", "Surface (Ha)", isAr)
-                                        else tr("المساحة (m²)", "Surface (m²)", isAr)
+                            Column(
+                                Modifier.weight(1f),
+                                verticalArrangement = Arrangement.spacedBy(4.dp)
+                            ) {
+                                Text(
+                                    if (propertyType?.unit?.contains("Ha", true) == true)
+                                        tr("المساحة (Ha)", "Surface (Ha)", isAr)
+                                    else tr("المساحة (m²)", "Surface (m²)", isAr),
+                                    style = MaterialTheme.typography.labelMedium,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = MaterialTheme.colorScheme.onSurface
+                                )
+                                OutlinedTextField(
+                                    value = areaText,
+                                    onValueChange = {
+                                        areaText = it.filter { char -> char.isDigit() || char == '.' || char == ',' }.take(14)
+                                    },
+                                    modifier = Modifier.fillMaxWidth(),
+                                    enabled = zone != null,
+                                    singleLine = true,
+                                    shape = MaterialTheme.shapes.large,
+                                    placeholder = { Text("120") },
+                                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                                    colors = OutlinedTextFieldDefaults.colors(
+                                        unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.42f),
+                                        focusedContainerColor = MaterialTheme.colorScheme.surface
                                     )
-                                },
-                                placeholder = { Text("120") },
-                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal)
-                            )
+                                )
+                            }
                         }
                     }
                 }
@@ -283,22 +289,40 @@ fun ReferenceApp(
                 if (estimate != null && zone != null && propertyType != null) {
                     Card(
                         Modifier.fillMaxWidth(),
-                        shape = MaterialTheme.shapes.large,
-                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary)
+                        shape = MaterialTheme.shapes.extraLarge,
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
                     ) {
                         Column(
                             Modifier.fillMaxWidth().padding(horizontal = 14.dp, vertical = 10.dp),
                             verticalArrangement = Arrangement.spacedBy(5.dp)
                         ) {
-                            Text(
-                                tr("القيمة الإجمالية التقديرية", "Valeur totale estimative", isAr),
-                                color = Color.White.copy(alpha = 0.9f),
-                                style = MaterialTheme.typography.labelMedium
-                            )
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(7.dp)
+                            ) {
+                                Surface(
+                                    color = Color.White.copy(alpha = 0.16f),
+                                    shape = MaterialTheme.shapes.small
+                                ) {
+                                    Text(
+                                        tr("النتيجة", "Résultat", isAr),
+                                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                                        color = Color.White,
+                                        style = MaterialTheme.typography.labelSmall,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
+                                Text(
+                                    tr("القيمة الإجمالية التقديرية", "Valeur totale estimative", isAr),
+                                    color = Color.White.copy(alpha = 0.92f),
+                                    style = MaterialTheme.typography.labelMedium
+                                )
+                            }
                             Text(
                                 formatNumber(estimate.totalMin, isAr) + " – " + formatNumber(estimate.totalMax, isAr) + if (isAr) " دج" else " DZD",
                                 color = Color.White,
-                                style = MaterialTheme.typography.titleLarge,
+                                style = MaterialTheme.typography.titleLarge.copy(fontSize = 22.sp),
                                 fontWeight = FontWeight.ExtraBold,
                                 maxLines = 1
                             )
@@ -310,7 +334,10 @@ fun ReferenceApp(
                                 style = MaterialTheme.typography.bodySmall,
                                 maxLines = 1
                             )
-                            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            Row(
+                                Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
                                 TextButton(
                                     onClick = {
                                         val message = shareText(region, propertyType, zone, estimate, area ?: 0.0, mode, isAr)
@@ -318,8 +345,13 @@ fun ReferenceApp(
                                         clipboard.setPrimaryClip(ClipData.newPlainText("Reference estimate", message))
                                         Toast.makeText(context, tr("تم نسخ النتيجة", "Résultat copié", isAr), Toast.LENGTH_SHORT).show()
                                     },
+                                    modifier = Modifier.weight(1f),
                                     colors = ButtonDefaults.textButtonColors(contentColor = Color.White)
-                                ) { Text(tr("نسخ النتيجة", "Copier", isAr)) }
+                                ) {
+                                    Icon(Icons.Default.ContentCopy, contentDescription = null, modifier = Modifier.size(16.dp))
+                                    Spacer(Modifier.width(6.dp))
+                                    Text(tr("نسخ النتيجة", "Copier", isAr))
+                                }
                                 TextButton(
                                     onClick = {
                                         val intent = Intent(Intent.ACTION_SEND).apply {
@@ -328,23 +360,49 @@ fun ReferenceApp(
                                         }
                                         context.startActivity(Intent.createChooser(intent, tr("مشاركة النتيجة", "Partager", isAr)))
                                     },
+                                    modifier = Modifier.weight(1f),
                                     colors = ButtonDefaults.textButtonColors(contentColor = Color.White)
-                                ) { Text(tr("مشاركة", "Partager", isAr)) }
+                                ) {
+                                    Icon(Icons.Default.Share, contentDescription = null, modifier = Modifier.size(16.dp))
+                                    Spacer(Modifier.width(6.dp))
+                                    Text(tr("مشاركة", "Partager", isAr))
+                                }
                             }
                         }
                     }
                 } else {
-                    Text(
-                        tr(
-                            "اختر الولاية والبلدية ونوع العقار، ثم أدخل المساحة لعرض النتيجة.",
-                            "Choisissez la wilaya, la commune et le type de bien, puis saisissez la superficie.",
-                            isAr
-                        ),
+                    Card(
                         modifier = Modifier.fillMaxWidth(),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        style = MaterialTheme.typography.bodySmall,
-                        textAlign = TextAlign.Center
-                    )
+                        shape = MaterialTheme.shapes.large,
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.62f)
+                        )
+                    ) {
+                        Row(
+                            Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 10.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(9.dp)
+                        ) {
+                            Icon(
+                                Icons.Default.Info,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(20.dp)
+                            )
+                            Text(
+                                tr(
+                                    "اختر الموقع ونوع العقار والمنطقة، ثم أدخل المساحة لعرض النتيجة.",
+                                    "Choisissez le lieu, le type et la zone, puis saisissez la superficie pour afficher le résultat.",
+                                    isAr
+                                ),
+                                modifier = Modifier.weight(1f),
+                                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                                style = MaterialTheme.typography.bodySmall,
+                                textAlign = TextAlign.Start,
+                                maxLines = 2
+                            )
+                        }
+                    }
                 }
 
                 Spacer(Modifier.weight(1f, fill = true))
@@ -369,12 +427,65 @@ fun ReferenceApp(
                 if (privacyOptionsRequired) {
                     TextButton(
                         onClick = onShowPrivacyOptions,
-                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                        modifier = Modifier.align(Alignment.CenterHorizontally).heightIn(min = 32.dp),
+                        contentPadding = PaddingValues(horizontal = 10.dp, vertical = 2.dp)
                     ) {
-                        Text(tr("خيارات الخصوصية والإعلانات", "Options de confidentialité et de publicité", isAr))
+                        Text(tr("خيارات الخصوصية والإعلانات", "Options de confidentialité et de publicité", isAr), style = MaterialTheme.typography.labelSmall)
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun ModeSelector(
+    isAr: Boolean,
+    isRent: Boolean,
+    onSale: () -> Unit,
+    onRent: () -> Unit
+) {
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        shape = MaterialTheme.shapes.large,
+        color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.75f)
+    ) {
+        Row(
+            Modifier.fillMaxWidth().padding(4.dp),
+            horizontalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            ModeOption(
+                modifier = Modifier.weight(1f),
+                selected = !isRent,
+                text = tr("بيع", "Vente", isAr),
+                onClick = onSale
+            )
+            ModeOption(
+                modifier = Modifier.weight(1f),
+                selected = isRent,
+                text = tr("إيجار", "Location", isAr),
+                onClick = onRent
+            )
+        }
+    }
+}
+
+@Composable
+private fun ModeOption(
+    modifier: Modifier,
+    selected: Boolean,
+    text: String,
+    onClick: () -> Unit
+) {
+    Surface(
+        modifier = modifier.height(40.dp).clickable(onClick = onClick),
+        shape = MaterialTheme.shapes.medium,
+        color = if (selected) MaterialTheme.colorScheme.primary else Color.Transparent,
+        contentColor = if (selected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant,
+        tonalElevation = if (selected) 1.dp else 0.dp
+    ) {
+        Box(contentAlignment = Alignment.Center) {
+            Text(text, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.labelLarge)
         }
     }
 }
@@ -387,13 +498,16 @@ private fun Header(
     onReset: () -> Unit
 ) {
     Row(
-        Modifier.fillMaxWidth().padding(top = 12.dp),
+        Modifier.fillMaxWidth().padding(top = 4.dp, bottom = 2.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(9.dp)
+        ) {
             Surface(
-                modifier = Modifier.size(46.dp),
+                modifier = Modifier.size(42.dp),
                 shape = MaterialTheme.shapes.large,
                 color = MaterialTheme.colorScheme.primary
             ) {
@@ -402,15 +516,16 @@ private fun Header(
                         "DZ",
                         color = MaterialTheme.colorScheme.onPrimary,
                         fontWeight = FontWeight.ExtraBold,
-                        style = MaterialTheme.typography.titleMedium
+                        style = MaterialTheme.typography.titleSmall
                     )
                 }
             }
             Column(verticalArrangement = Arrangement.spacedBy(1.dp)) {
                 Text(
                     tr("المرجع العقاري", "Référence immobilière", isAr),
-                    fontWeight = FontWeight.Bold,
-                    style = MaterialTheme.typography.titleSmall
+                    fontWeight = FontWeight.ExtraBold,
+                    style = MaterialTheme.typography.titleSmall,
+                    color = MaterialTheme.colorScheme.onBackground
                 )
                 Text(
                     tr("الجزائر", "Algérie", isAr),
@@ -420,13 +535,42 @@ private fun Header(
             }
         }
         Row(verticalAlignment = Alignment.CenterVertically) {
-            TextButton(onClick = onReset) {
-                Icon(Icons.Default.Refresh, contentDescription = null, modifier = Modifier.size(16.dp))
-                Spacer(Modifier.width(4.dp))
-                Text(tr("إعادة ضبط", "Réinitialiser", isAr), style = MaterialTheme.typography.labelMedium)
+            Surface(
+                modifier = Modifier.clickable(onClick = onReset),
+                shape = MaterialTheme.shapes.medium,
+                color = MaterialTheme.colorScheme.surfaceVariant
+            ) {
+                Row(
+                    Modifier.padding(horizontal = 9.dp, vertical = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(5.dp)
+                ) {
+                    Icon(
+                        Icons.Default.Refresh,
+                        contentDescription = tr("إعادة ضبط", "Réinitialiser", isAr),
+                        modifier = Modifier.size(16.dp),
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Text(
+                        tr("ضبط", "Reset", isAr),
+                        style = MaterialTheme.typography.labelSmall,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                }
             }
-            TextButton(onClick = onLanguageChange) {
-                Text(if (language == "ar") "FR" else "عربي", fontWeight = FontWeight.Bold)
+            Spacer(Modifier.width(6.dp))
+            Surface(
+                modifier = Modifier.clickable(onClick = onLanguageChange),
+                shape = MaterialTheme.shapes.medium,
+                color = MaterialTheme.colorScheme.primaryContainer
+            ) {
+                Text(
+                    if (language == "ar") "FR" else "عربي",
+                    modifier = Modifier.padding(horizontal = 11.dp, vertical = 8.dp),
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    fontWeight = FontWeight.ExtraBold,
+                    style = MaterialTheme.typography.labelMedium
+                )
             }
         }
     }
@@ -625,8 +769,13 @@ private fun ChoiceField(
         else options.filter { it.second.lowercase(Locale.ROOT).contains(normalizedQuery) }
     }
 
-    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-        Text(label, style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.SemiBold)
+    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        Text(
+            label,
+            style = MaterialTheme.typography.labelMedium,
+            fontWeight = FontWeight.SemiBold,
+            color = MaterialTheme.colorScheme.onSurface
+        )
         Box(Modifier.fillMaxWidth()) {
             OutlinedTextField(
                 value = value,
@@ -636,10 +785,16 @@ private fun ChoiceField(
                 singleLine = true,
                 shape = MaterialTheme.shapes.large,
                 modifier = Modifier.fillMaxWidth(),
-                placeholder = { Text(tr("اختر...", "Sélectionner...", isAr)) },
+                placeholder = {
+                    Text(tr("اختر...", "Sélectionner...", isAr), style = MaterialTheme.typography.bodySmall)
+                },
                 trailingIcon = {
                     Icon(Icons.Default.ArrowDropDown, contentDescription = null)
-                }
+                },
+                colors = OutlinedTextFieldDefaults.colors(
+                    unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.42f),
+                    focusedContainerColor = MaterialTheme.colorScheme.surface
+                )
             )
             if (enabled) {
                 Box(
