@@ -11,13 +11,13 @@ permissions:
 
 jobs:
   import:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           ref: feature/import-reference-prices
           token: ${{ secrets.GITHUB_TOKEN }}
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           repository: younestech31/Lattab
           ref: main
