@@ -13,7 +13,7 @@ import androidx.compose.ui.graphics.Color
  * Charcoal           #202925  → onBackground / high-contrast text
  * Matte Gold         #B69A62  → secondary (limited use)
  * Warm Off-White     #F5F4EF  → background
- * Neutral Grey       #7A827C  → onSurfaceVariant
+ * Accessible Grey    #5F6A63  → onSurfaceVariant (UI text)
  * Soft Border        #DDE1DC  → outline
  */
 
@@ -22,7 +22,7 @@ private val BrandMutedGreen = Color(0xFF31594E)
 private val BrandCharcoal = Color(0xFF202925)
 private val BrandMatteGold = Color(0xFFB69A62)
 private val BrandOffWhite = Color(0xFFF5F4EF)
-private val BrandNeutralGrey = Color(0xFF7A827C)
+private val BrandAccessibleGrey = Color(0xFF5F6A63)
 private val BrandSoftBorder = Color(0xFFDDE1DC)
 
 private val ReferenceColors = lightColorScheme(
@@ -43,7 +43,7 @@ private val ReferenceColors = lightColorScheme(
     surface = Color(0xFFFFFFFF),
     onSurface = BrandCharcoal,
     surfaceVariant = Color(0xFFE8EEEA),
-    onSurfaceVariant = BrandNeutralGrey,
+    onSurfaceVariant = BrandAccessibleGrey,
     outline = BrandSoftBorder,
     outlineVariant = Color(0xFFE8EEEA),
     error = Color(0xFFB3261E),

@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.widget.Toast
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
@@ -25,6 +26,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -258,7 +262,13 @@ fun ReferenceApp(
                                     onValueChange = {
                                         areaText = it.filter { char -> char.isDigit() || char == '.' || char == ',' }.take(14)
                                     },
-                                    modifier = Modifier.fillMaxWidth(),
+                                    modifier = Modifier.fillMaxWidth().semantics {
+                                        contentDescription = if (propertyType?.unit?.contains("Ha", true) == true) {
+                                            tr("المساحة بالهكتار", "Surface en hectares", isAr)
+                                        } else {
+                                            tr("المساحة بالمتر المربع", "Surface en mètres carrés", isAr)
+                                        }
+                                    },
                                     enabled = zone != null,
                                     singleLine = true,
                                     shape = MaterialTheme.shapes.large,
@@ -346,7 +356,7 @@ fun ReferenceApp(
                                         clipboard.setPrimaryClip(ClipData.newPlainText("Reference estimate", message))
                                         Toast.makeText(context, tr("تم نسخ النتيجة", "Résultat copié", isAr), Toast.LENGTH_SHORT).show()
                                     },
-                                    modifier = Modifier.weight(1f),
+                                    modifier = Modifier.weight(1f).heightIn(min = 48.dp),
                                     colors = ButtonDefaults.textButtonColors(contentColor = Color.White)
                                 ) {
                                     Icon(Icons.Default.ContentCopy, contentDescription = null, modifier = Modifier.size(16.dp))
@@ -361,7 +371,7 @@ fun ReferenceApp(
                                         }
                                         context.startActivity(Intent.createChooser(intent, tr("مشاركة النتيجة", "Partager", isAr)))
                                     },
-                                    modifier = Modifier.weight(1f),
+                                    modifier = Modifier.weight(1f).heightIn(min = 48.dp),
                                     colors = ButtonDefaults.textButtonColors(contentColor = Color.White)
                                 ) {
                                     Icon(Icons.Default.Share, contentDescription = null, modifier = Modifier.size(16.dp))
@@ -428,7 +438,7 @@ fun ReferenceApp(
                 if (privacyOptionsRequired) {
                     TextButton(
                         onClick = onShowPrivacyOptions,
-                        modifier = Modifier.align(Alignment.CenterHorizontally).heightIn(min = 32.dp),
+                        modifier = Modifier.align(Alignment.CenterHorizontally).heightIn(min = 48.dp),
                         contentPadding = PaddingValues(horizontal = 10.dp, vertical = 2.dp)
                     ) {
                         Text(tr("خيارات الخصوصية والإعلانات", "Options de confidentialité et de publicité", isAr), style = MaterialTheme.typography.labelSmall)
@@ -479,7 +489,11 @@ private fun ModeOption(
     onClick: () -> Unit
 ) {
     Surface(
-        modifier = modifier.height(40.dp).clickable(onClick = onClick),
+        modifier = modifier.heightIn(min = 48.dp).toggleable(
+            value = selected,
+            role = Role.RadioButton,
+            onValueChange = { isSelected -> if (isSelected) onClick() }
+        ),
         shape = MaterialTheme.shapes.medium,
         color = if (selected) MaterialTheme.colorScheme.primary else Color.Transparent,
         contentColor = if (selected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant,
@@ -527,7 +541,11 @@ private fun Header(
         }
         Row(verticalAlignment = Alignment.CenterVertically) {
             Surface(
-                modifier = Modifier.clickable(onClick = onReset),
+                modifier = Modifier.heightIn(min = 48.dp).clickable(
+                    role = Role.Button,
+                    onClickLabel = tr("إعادة ضبط الاختيارات", "Réinitialiser les sélections", isAr),
+                    onClick = onReset
+                ),
                 shape = MaterialTheme.shapes.medium,
                 color = MaterialTheme.colorScheme.surfaceVariant
             ) {
@@ -538,7 +556,7 @@ private fun Header(
                 ) {
                     Icon(
                         Icons.Default.Refresh,
-                        contentDescription = tr("إعادة ضبط", "Réinitialiser", isAr),
+                        contentDescription = null,
                         modifier = Modifier.size(16.dp),
                         tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -551,7 +569,11 @@ private fun Header(
             }
             Spacer(Modifier.width(6.dp))
             Surface(
-                modifier = Modifier.clickable(onClick = onLanguageChange),
+                modifier = Modifier.heightIn(min = 48.dp).widthIn(min = 48.dp).clickable(
+                    role = Role.Button,
+                    onClickLabel = tr("تغيير اللغة", "Changer de langue", isAr),
+                    onClick = onLanguageChange
+                ),
                 shape = MaterialTheme.shapes.medium,
                 color = MaterialTheme.colorScheme.primaryContainer
             ) {
@@ -789,10 +811,21 @@ private fun ChoiceField(
             )
             if (enabled) {
                 Box(
-                    Modifier.matchParentSize().clickable {
-                        query = ""
-                        dialogOpen = true
-                    }
+                    Modifier.matchParentSize()
+                        .semantics {
+                            contentDescription = if (value.isBlank()) {
+                                tr("$label، غير محدد", "$label, non sélectionné", isAr)
+                            } else {
+                                "$label: $value"
+                            }
+                        }
+                        .clickable(
+                            role = Role.Button,
+                            onClickLabel = tr("فتح قائمة $label", "Ouvrir la liste $label", isAr)
+                        ) {
+                            query = ""
+                            dialogOpen = true
+                        }
                 )
             }
         }
@@ -837,7 +870,7 @@ private fun ChoiceField(
                                         onSelect(option.first)
                                         dialogOpen = false
                                     },
-                                    modifier = Modifier.fillMaxWidth()
+                                    modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)
                                 ) {
                                     Text(
                                         option.second,
@@ -852,7 +885,10 @@ private fun ChoiceField(
                 }
             },
             confirmButton = {
-                TextButton(onClick = { dialogOpen = false }) {
+                TextButton(
+                    onClick = { dialogOpen = false },
+                    modifier = Modifier.heightIn(min = 48.dp)
+                ) {
                     Text(tr("إغلاق", "Fermer", isAr))
                 }
             },
@@ -1051,10 +1087,10 @@ private fun DisclaimerCard(isAr: Boolean) {
     ) {
         Column(Modifier.padding(17.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(7.dp)) {
-                Icon(Icons.Default.Info, contentDescription = null, tint = MaterialTheme.colorScheme.secondary)
+                Icon(Icons.Default.Info, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
                 Text(
                     tr("تنبيه مهم", "Avis important", isAr),
-                    color = MaterialTheme.colorScheme.secondary,
+                    color = MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.Bold,
                     style = MaterialTheme.typography.titleSmall
                 )
