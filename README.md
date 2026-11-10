@@ -21,7 +21,7 @@ fc2e85f0cb4d20fd3eb2961a95a5aed42cca3309
 المحوّل scripts/export-reference-data.cjs يتحقق من وجود ملفات الأسعار الـ116 ويحوّلها إلى JSON داخل app/src/main/assets/reference/ دون إعادة حساب القيم.
 
 ## البناء
-يتطلب JDK 17 وAndroid SDK API 37.
+يتطلب JDK 17 وAndroid SDK API 36.
 ~~~bash
 npm install
 npm run export:reference
