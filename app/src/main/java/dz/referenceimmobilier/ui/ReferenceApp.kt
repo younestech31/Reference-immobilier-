@@ -616,74 +616,82 @@ private fun Header(
         color = MaterialTheme.colorScheme.primary,
         shadowElevation = 2.dp
     ) {
-        Row(
-            Modifier.fillMaxWidth().padding(horizontal = 11.dp, vertical = 10.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            BrandMark(
-                modifier = Modifier.size(44.dp),
-                tint = MaterialTheme.colorScheme.primary,
-                containerColor = Color.White,
-                contentDescription = tr("شعار المرجع العقاري", "Marque Reference Immobilier", isAr)
-            )
-            Column(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(2.dp)
+        Column {
+            Row(
+                Modifier.fillMaxWidth().padding(horizontal = 11.dp, vertical = 10.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Text(
-                    tr("المرجع العقاري", "Référence immobilière", isAr),
-                    fontWeight = FontWeight.ExtraBold,
-                    style = MaterialTheme.typography.titleMedium,
-                    color = Color.White,
-                    maxLines = 1
+                BrandMark(
+                    modifier = Modifier.size(44.dp),
+                    tint = MaterialTheme.colorScheme.primary,
+                    containerColor = Color.White,
+                    contentDescription = tr("شعار المرجع العقاري", "Marque Reference Immobilier", isAr)
                 )
-                Text(
-                    tr("مرجع الأسعار العقارية • الجزائر", "Référentiel des prix immobiliers • Algérie", isAr),
-                    color = Color.White.copy(alpha = 0.82f),
-                    style = MaterialTheme.typography.labelSmall,
-                    maxLines = 1
-                )
-            }
-            Surface(
-                modifier = Modifier.size(48.dp).clickable(
-                    role = Role.Button,
-                    onClickLabel = tr("إعادة ضبط الاختيارات", "Réinitialiser les sélections", isAr),
-                    onClick = onReset
-                ),
-                shape = MaterialTheme.shapes.large,
-                color = Color.White.copy(alpha = 0.14f)
-            ) {
-                Box(contentAlignment = Alignment.Center) {
-                    Icon(
-                        Icons.Default.Refresh,
-                        contentDescription = null,
-                        modifier = Modifier.size(20.dp),
-                        tint = Color.White
-                    )
-                }
-            }
-            Surface(
-                modifier = Modifier.heightIn(min = 48.dp).widthIn(min = 48.dp).clickable(
-                    role = Role.Button,
-                    onClickLabel = tr("تغيير اللغة", "Changer de langue", isAr),
-                    onClick = onLanguageChange
-                ),
-                shape = MaterialTheme.shapes.large,
-                color = Color.White
-            ) {
-                Box(
-                    Modifier.padding(horizontal = 9.dp),
-                    contentAlignment = Alignment.Center
+                Column(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(2.dp)
                 ) {
                     Text(
-                        if (language == "ar") "FR" else "عربي",
-                        color = MaterialTheme.colorScheme.primary,
+                        tr("المرجع العقاري", "Référence immobilière", isAr),
                         fontWeight = FontWeight.ExtraBold,
-                        style = MaterialTheme.typography.labelLarge
+                        style = MaterialTheme.typography.titleMedium,
+                        color = Color.White,
+                        maxLines = 1
+                    )
+                    Text(
+                        tr("مرجع الأسعار العقارية • الجزائر", "Référentiel des prix immobiliers • Algérie", isAr),
+                        color = Color.White.copy(alpha = 0.82f),
+                        style = MaterialTheme.typography.labelSmall,
+                        maxLines = 1
                     )
                 }
+                Surface(
+                    modifier = Modifier.size(48.dp).clickable(
+                        role = Role.Button,
+                        onClickLabel = tr("إعادة ضبط الاختيارات", "Réinitialiser les sélections", isAr),
+                        onClick = onReset
+                    ),
+                    shape = MaterialTheme.shapes.large,
+                    color = Color.White.copy(alpha = 0.14f)
+                ) {
+                    Box(contentAlignment = Alignment.Center) {
+                        Icon(
+                            Icons.Default.Refresh,
+                            contentDescription = null,
+                            modifier = Modifier.size(20.dp),
+                            tint = Color.White
+                        )
+                    }
+                }
+                Surface(
+                    modifier = Modifier.heightIn(min = 48.dp).widthIn(min = 48.dp).clickable(
+                        role = Role.Button,
+                        onClickLabel = tr("تغيير اللغة", "Changer de langue", isAr),
+                        onClick = onLanguageChange
+                    ),
+                    shape = MaterialTheme.shapes.large,
+                    color = Color.White
+                ) {
+                    Box(
+                        Modifier.padding(horizontal = 9.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            if (language == "ar") "FR" else "عربي",
+                            color = MaterialTheme.colorScheme.primary,
+                            fontWeight = FontWeight.ExtraBold,
+                            style = MaterialTheme.typography.labelLarge
+                        )
+                    }
+                }
             }
+            // A restrained matte-gold rule ties the header back to the brand palette.
+            Surface(
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp).height(3.dp),
+                color = MaterialTheme.colorScheme.secondary,
+                shape = MaterialTheme.shapes.extraLarge
+            ) {}
         }
     }
 }
