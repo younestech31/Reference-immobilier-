@@ -21,6 +21,16 @@ android {
         buildConfig = true
     }
 
+    buildTypes {
+        getByName("debug") {
+            // Google's official test native unit. Never request live ads from debug builds.
+            buildConfigField("String", "NATIVE_AD_UNIT_ID", "\"ca-app-pub-3940256099942544/2247696110\"")
+        }
+        getByName("release") {
+            buildConfigField("String", "NATIVE_AD_UNIT_ID", "\"ca-app-pub-4758243980765802/1545974700\"")
+        }
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
@@ -41,8 +51,8 @@ dependencies {
     implementation("androidx.compose.material3:material3")
     implementation("androidx.compose.material:material-icons-extended")
 
-    // Google Mobile Ads SDK and consent management.
-    implementation("com.google.android.gms:play-services-ads:25.5.0")
+    // Google Mobile Ads Next-Gen SDK and consent management.
+    implementation("com.google.android.libraries.ads.mobile.sdk:ads-mobile-sdk:1.6.0")
     implementation("com.google.android.ump:user-messaging-platform:4.0.0")
 
     testImplementation("junit:junit:4.13.2")
