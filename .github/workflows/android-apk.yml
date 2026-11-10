@@ -6,6 +6,7 @@ on:
       - feature/native-android-app
       - feature/admob-native-nextgen
       - feature/stable-debug-signing
+      - feature/single-screen-no-scroll
     paths-ignore:
       - "*.md"
       - "docs/**"
