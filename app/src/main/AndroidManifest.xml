@@ -8,11 +8,12 @@
         android:allowBackup="true"
         android:label="المرجع العقاري الجزائري"
         android:supportsRtl="true"
-        android:theme="@android:style/Theme.Material.Light.NoActionBar">
+        android:theme="@android:style/Theme.Material.Light.NoActionBar"
+        android:hardwareAccelerated="true">
 
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-4758243980765802~1703767707" />
+            android:value="ca-app-pub-4758243980765802~9676405305" />
 
         <activity
             android:name=".MainActivity"
