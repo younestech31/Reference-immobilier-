@@ -136,9 +136,9 @@ private fun createNativeAdView(
     }
     adView.addView(
         content,
-        NativeAdView.LayoutParams(
-            NativeAdView.LayoutParams.MATCH_PARENT,
-            NativeAdView.LayoutParams.WRAP_CONTENT
+        android.widget.FrameLayout.LayoutParams(
+            android.widget.FrameLayout.LayoutParams.MATCH_PARENT,
+            android.widget.FrameLayout.LayoutParams.WRAP_CONTENT
         )
     )
 
