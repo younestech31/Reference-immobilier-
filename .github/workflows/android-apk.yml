@@ -7,6 +7,7 @@ on:
       - feature/admob-native-nextgen
       - feature/stable-debug-signing
       - feature/single-screen-no-scroll
+      - feature/single-screen-ui-polish
     paths-ignore:
       - "*.md"
       - "docs/**"
