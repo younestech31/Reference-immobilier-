@@ -41,7 +41,11 @@ import java.util.Locale
 private fun tr(ar: String, fr: String, isAr: Boolean) = if (isAr) ar else fr
 
 @Composable
-fun ReferenceApp() {
+fun ReferenceApp(
+    canRequestAds: Boolean,
+    privacyOptionsRequired: Boolean,
+    onShowPrivacyOptions: () -> Unit
+) {
     val context = LocalContext.current
     var language by rememberSaveable { mutableStateOf("ar") }
     val isAr = language == "ar"
@@ -122,6 +126,12 @@ fun ReferenceApp() {
                 )
 
                 HeroCard(isAr)
+
+                // The inline native ad is visually separated from the calculator controls.
+                NativeAdPlacement(
+                    canRequestAds = canRequestAds,
+                    isArabic = isAr
+                )
 
                 Column(verticalArrangement = Arrangement.spacedBy(9.dp)) {
                     SectionHeading(
@@ -382,6 +392,17 @@ fun ReferenceApp() {
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         textAlign = TextAlign.Center
                     )
+                    if (privacyOptionsRequired) {
+                        TextButton(onClick = onShowPrivacyOptions) {
+                            Text(
+                                tr(
+                                    "خيارات الخصوصية والإعلانات",
+                                    "Options de confidentialité et de publicité",
+                                    isAr
+                                )
+                            )
+                        }
+                    }
                 }
             }
         }
