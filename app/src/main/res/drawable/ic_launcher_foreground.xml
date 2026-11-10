@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Safe zone ~66dp centered. Geometric cadastral reference mark -->
+    <!-- Outer parcel -->
+    <path
+        android:pathData="M30,30 h48 v48 h-48 z"
+        android:strokeWidth="5.5"
+        android:strokeColor="#FFFFFF"
+        android:fillColor="#00000000"
+        android:strokeLineJoin="miter"/>
+    <!-- Horizontal survey line -->
+    <path
+        android:pathData="M30,48 H78"
+        android:strokeWidth="4"
+        android:strokeColor="#FFFFFF"
+        android:strokeLineCap="butt"/>
+    <!-- Vertical survey line -->
+    <path
+        android:pathData="M48,30 V78"
+        android:strokeWidth="4"
+        android:strokeColor="#FFFFFF"
+        android:strokeLineCap="butt"/>
+    <!-- Reference origin -->
+    <path
+        android:pathData="M48,48 m-5.5,0 a5.5,5.5 0 1,0 11,0 a5.5,5.5 0 1,0 -11,0"
+        android:fillColor="#FFFFFF"/>
+    <!-- Secondary survey corner marker -->
+    <path
+        android:pathData="M64,64 h10 v10 h-10 z"
+        android:fillColor="#FFFFFF"/>
+</vector>
