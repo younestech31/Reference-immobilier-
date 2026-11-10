@@ -1,17 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Base application theme. Use Material3 light for Compose compatibility. -->
     <style name="Theme.ReferenceImmobilier" parent="android:Theme.Material.Light.NoActionBar">
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="android:windowLightStatusBar">true</item>
     </style>
 
-    <!-- SplashScreen theme (Android 12+ system splash) -->
-    <style name="Theme.ReferenceImmobilier.Splash" parent="Theme.ReferenceImmobilier">
-        <item name="android:windowSplashScreenBackground">#173B34</item>
-        <item name="android:windowSplashScreenAnimatedIcon">@drawable/ic_launcher_foreground</item>
-        <item name="android:windowSplashScreenIconBackgroundColor">#173B34</item>
-        <item name="android:windowSplashScreenAnimationDuration">300</item>
+    <!-- AndroidX SplashScreen: API 31 platform splash and pre-31 compat. -->
+    <style name="Theme.ReferenceImmobilier.Splash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/brand_primary</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_launcher_foreground</item>
+        <item name="windowSplashScreenIconBackgroundColor">@color/brand_primary</item>
+        <item name="postSplashScreenTheme">@style/Theme.ReferenceImmobilier</item>
     </style>
 </resources>

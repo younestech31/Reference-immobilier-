@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none" role="img" aria-label="Brand mark">
+  <rect x="14" y="14" width="72" height="72" stroke="#173B34" stroke-width="6"/>
+  <path d="M14 40 H86" stroke="#173B34" stroke-width="4.5"/>
+  <path d="M40 14 V86" stroke="#173B34" stroke-width="4.5"/>
+  <circle cx="40" cy="40" r="6.5" fill="#173B34"/>
+  <rect x="66" y="66" width="12" height="12" fill="#173B34"/>
+</svg>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 100" fill="none">
+  <g transform="translate(8,8)">
+    <rect x="14" y="14" width="72" height="72" stroke="#173B34" stroke-width="6"/>
+    <path d="M14 40 H86" stroke="#173B34" stroke-width="4.5"/>
+    <path d="M40 14 V86" stroke="#173B34" stroke-width="4.5"/>
+    <circle cx="40" cy="40" r="6.5" fill="#173B34"/>
+    <rect x="66" y="66" width="12" height="12" fill="#173B34"/>
+  </g>
+  <text x="116" y="46" fill="#173B34" font-family="Inter, sans-serif" font-size="26" font-weight="700">Reference Immobilier</text>
+  <text x="116" y="74" fill="#7A827C" font-family="Inter, sans-serif" font-size="16">Algérie</text>
+</svg>
