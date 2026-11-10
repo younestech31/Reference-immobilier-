@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="brand_primary">#173B34</color>
+    <color name="brand_muted_green">#31594E</color>
+    <color name="brand_charcoal">#202925</color>
+    <color name="brand_matte_gold">#B69A62</color>
+    <color name="brand_off_white">#F5F4EF</color>
+    <color name="brand_neutral_grey">#7A827C</color>
+    <color name="brand_soft_border">#DDE1DC</color>
+    <color name="ic_launcher_background">#173B34</color>
+</resources>

@@ -8,6 +8,7 @@ on:
       - feature/stable-debug-signing
       - feature/single-screen-no-scroll
       - feature/single-screen-ui-polish
+      - feature/brand-identity
     paths-ignore:
       - "*.md"
       - "docs/**"
@@ -100,22 +101,32 @@ jobs:
               exit 1
             fi
           done
-          KEYSTORE_PATH="$RUNNER_TEMP/reference-immobilier-debug.jks"
-          printf '%s' "$ANDROID_DEBUG_KEYSTORE_BASE64" | base64 --decode > "$KEYSTORE_PATH"
-          chmod 600 "$KEYSTORE_PATH"
-          echo "ANDROID_DEBUG_KEYSTORE_PATH=$KEYSTORE_PATH" >> "$GITHUB_ENV"
+          mkdir -p "$RUNNER_TEMP/android-signing"
+          echo "$ANDROID_DEBUG_KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/android-signing/debug.keystore"
+          echo "ANDROID_DEBUG_KEYSTORE_PATH=$RUNNER_TEMP/android-signing/debug.keystore" >> "$GITHUB_ENV"
+          echo "ANDROID_DEBUG_KEYSTORE_PASSWORD=$ANDROID_DEBUG_KEYSTORE_PASSWORD" >> "$GITHUB_ENV"
+          echo "ANDROID_DEBUG_KEY_ALIAS=$ANDROID_DEBUG_KEY_ALIAS" >> "$GITHUB_ENV"
+          echo "ANDROID_DEBUG_KEY_PASSWORD=$ANDROID_DEBUG_KEY_PASSWORD" >> "$GITHUB_ENV"
 
-      - name: Run unit tests and build debug APK
-        env:
-          ANDROID_DEBUG_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_DEBUG_KEYSTORE_PASSWORD }}
-          ANDROID_DEBUG_KEY_ALIAS: ${{ secrets.ANDROID_DEBUG_KEY_ALIAS }}
-          ANDROID_DEBUG_KEY_PASSWORD: ${{ secrets.ANDROID_DEBUG_KEY_PASSWORD }}
-        run: ./gradlew --no-daemon testDebugUnitTest assembleDebug
+      - name: Build Debug APK and run unit tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          ./gradlew testDebugUnitTest assembleDebug --stacktrace
 
-      - name: Upload debug APK
-        uses: actions/upload-artifact@v6
+      - name: Upload Debug APK
+        uses: actions/upload-artifact@v4
         with:
-          name: algerian-real-estate-reference-debug
+          name: app-debug
           path: app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
-          retention-days: 30
+
+      - name: Publish APK as release asset on main
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: debug-${{ github.sha }}
+          name: Debug build ${{ github.sha }}
+          files: app/build/outputs/apk/debug/app-debug.apk
+          draft: true
+          prerelease: true
