@@ -4,6 +4,7 @@ on:
     branches:
       - main
       - feature/native-android-app
+      - feature/admob-native-nextgen
     paths-ignore:
       - "*.md"
       - "docs/**"
