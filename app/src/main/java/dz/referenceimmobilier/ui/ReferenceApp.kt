@@ -602,6 +602,7 @@ private fun ModeOption(
     }
 }
 
+// Branded single-screen header: visual identity without adding vertical scrolling.
 @Composable
 private fun Header(
     isAr: Boolean,
