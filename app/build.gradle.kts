@@ -51,10 +51,10 @@ android {
                 signingConfig = signingConfigs.getByName("stableDebug")
             }
             // Google's official test native unit. Never request live ads from debug builds.
-            buildConfigField("String", "NATIVE_AD_UNIT_ID", "\\"ca-app-pub-3940256099942544/2247696110\\"")
+            buildConfigField("String", "NATIVE_AD_UNIT_ID", "\"ca-app-pub-3940256099942544/2247696110\"")
         }
         getByName("release") {
-            buildConfigField("String", "NATIVE_AD_UNIT_ID", "\\"ca-app-pub-4758243980765802/1545974700\\"")
+            buildConfigField("String", "NATIVE_AD_UNIT_ID", "\"ca-app-pub-4758243980765802/1545974700\"")
         }
     }
 
