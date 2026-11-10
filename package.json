@@ -1,0 +1,12 @@
+{
+  "name": "algerian-real-estate-reference",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Validated exporter for the native Android reference-price dataset",
+  "scripts": {
+    "export:reference": "node scripts/export-reference-data.cjs"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3"
+  }
+}
