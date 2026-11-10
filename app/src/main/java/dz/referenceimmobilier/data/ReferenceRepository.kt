@@ -52,7 +52,7 @@ object ReferenceRepository {
                     if (types.isEmpty()) null
                     else PriceCategory(category.first, category.second, category.third, types)
                 }
-                regions.add(CommuneReference(
+                add(CommuneReference(
                     commune = regionObject.optString("commune"),
                     region = regionObject.optString("region").takeIf { it.isNotBlank() },
                     categories = categories
