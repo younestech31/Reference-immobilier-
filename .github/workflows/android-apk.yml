@@ -3,7 +3,6 @@ on:
   push:
     branches:
       - main
-      - feature/visual-ui-refresh
       - feature/native-android-app
       - feature/admob-native-nextgen
       - feature/stable-debug-signing
