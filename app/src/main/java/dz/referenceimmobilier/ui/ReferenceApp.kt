@@ -312,7 +312,7 @@ fun ReferenceApp(
                                     enabled = zone != null,
                                     singleLine = true,
                                     shape = MaterialTheme.shapes.large,
-                                    placeholder = { Text("120") },
+                                    placeholder = { Text(tr("مثال: 120", "Ex. 120", isAr)) },
                                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                                     colors = OutlinedTextFieldDefaults.colors(
                                         unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.42f),
@@ -406,7 +406,10 @@ fun ReferenceApp(
                             Text(
                                 tr("سعر الوحدة: ", "Prix unitaire : ", isAr) +
                                     formatNumber(estimate.unitMin, isAr) + " – " + formatNumber(estimate.unitMax, isAr) +
-                                    if (propertyType.unit.contains("Ha", true)) " / Ha" else " / m²",
+                                    if (propertyType.unit.contains("Ha", true))
+                                        tr(" دج/هكتار", " DZD/Ha", isAr)
+                                    else
+                                        tr(" دج/م²", " DZD/m²", isAr),
                                 color = Color.White.copy(alpha = 0.92f),
                                 style = MaterialTheme.typography.bodySmall,
                                 fontWeight = FontWeight.SemiBold,
