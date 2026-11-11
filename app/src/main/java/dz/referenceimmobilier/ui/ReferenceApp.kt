@@ -255,7 +255,7 @@ fun ReferenceApp(
                                 ChoiceField(
                                     label = tr("صنف العقار", "Type de bien", isAr),
                                     value = propertyType?.label?.let { localizedTypeLabel(it, isAr) }.orEmpty(),
-                                    options = category?.types?.mapIndexed { index, entry -> index.toString() to entry.label }.orEmpty(),
+                                    options = category?.types?.mapIndexed { index, entry -> index.toString() to localizedTypeLabel(entry.label, isAr) }.orEmpty(),
                                     enabled = category != null,
                                     isAr = isAr,
                                     onSelect = {
