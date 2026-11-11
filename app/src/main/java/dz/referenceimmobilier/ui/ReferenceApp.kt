@@ -254,7 +254,7 @@ fun ReferenceApp(
                             Box(Modifier.weight(1f)) {
                                 ChoiceField(
                                     label = tr("صنف العقار", "Type de bien", isAr),
-                                    value = propertyType?.label.orEmpty(),
+                                    value = propertyType?.label?.let { localizedTypeLabel(it, isAr) }.orEmpty(),
                                     options = category?.types?.mapIndexed { index, entry -> index.toString() to entry.label }.orEmpty(),
                                     enabled = category != null,
                                     isAr = isAr,
@@ -1152,7 +1152,7 @@ private fun ResultCard(
 
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Text(
-                    (if (ar) zone.labelAr else zone.labelFr) + " • " + type.label,
+                    (if (ar) zone.labelAr else zone.labelFr) + " • " + localizedTypeLabel(type.label, ar),
                     color = Color.White,
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.SemiBold
@@ -1241,6 +1241,34 @@ private fun cleanRegion(name: String): String {
     return result.trimEnd('.').replace(Regex("\\s+"), " ")
 }
 
+private fun localizedTypeLabel(label: String, ar: Boolean): String {
+    if (!ar) return label
+
+    return when (label.trim()) {
+        "Standing" -> "فاخر"
+        "Amélioré", "Ameliore" -> "محسّن"
+        "Economique", "Économique" -> "اقتصادي"
+        "Précaire", "Precaire" -> "هش"
+        "Artère hautement commerciale" -> "شارع تجاري عالي النشاط"
+        "Artère moyennement commerciale" -> "شارع تجاري متوسط النشاط"
+        "Artère peu commerciale" -> "شارع ضعيف النشاط التجاري"
+        "Artère principale" -> "شارع رئيسي"
+        "Artère secondaire" -> "شارع ثانوي"
+        "En zone urbaine" -> "في منطقة حضرية"
+        "En zone rurale" -> "في منطقة ريفية"
+        "Pleine propriété (1 façade) avec raccordements" -> "ملكية كاملة (واجهة واحدة) مع التوصيلات"
+        "Pleine propriété (1 façade) sans raccordements" -> "ملكية كاملة (واجهة واحدة) دون توصيلات"
+        "Pleine propriété (2 façades) avec raccordements" -> "ملكية كاملة (واجهتان) مع التوصيلات"
+        "Pleine propriété (2 façades) sans raccordements" -> "ملكية كاملة (واجهتان) دون توصيلات"
+        "Terrain dans l'indivision" -> "أرض على الشيوع"
+        "Potentialité faible" -> "قابلية استثمار ضعيفة"
+        "Potentialité moyenne" -> "قابلية استثمار متوسطة"
+        "Potentialité élevée" -> "قابلية استثمار مرتفعة"
+        "Terrain industriel" -> "أرض صناعية"
+        else -> label
+    }
+}
+
 private fun formatNumber(value: Double, ar: Boolean): String =
     NumberFormat.getNumberInstance(if (ar) Locale("ar", "DZ") else Locale("fr", "DZ"))
         .apply { maximumFractionDigits = 2 }.format(value)
@@ -1261,14 +1289,14 @@ private fun shareText(
 
     return if (ar) {
         "المرجع العقاري الجزائري — " + operationAr + "\n" +
-            "المنطقة: " + location + "\nالصنف: " + type.label + "\nالموقع: " + zone.labelAr + "\n" +
+            "المنطقة: " + location + "\nالصنف: " + localizedTypeLabel(type.label, true) + "\nالموقع: " + zone.labelAr + "\n" +
             "سعر الوحدة: من " + formatNumber(result.unitMin, true) + " إلى " + formatNumber(result.unitMax, true) + "\n" +
             "المساحة: " + formatNumber(area, true) + " " + unit + "\n" +
             "القيمة الإجمالية: من " + formatNumber(result.totalMin, true) + " إلى " + formatNumber(result.totalMax, true) + " دج\n" +
             "نتيجة استرشادية وفق مرجع المديرية العامة للضرائب 2025–2026."
     } else {
         "Référentiel immobilier algérien — " + operationFr + "\n" +
-            "Secteur : " + location + "\nType : " + type.label + "\nZone : " + zone.labelFr + "\n" +
+            "Secteur : " + location + "\nType : " + localizedTypeLabel(type.label, false) + "\nZone : " + zone.labelFr + "\n" +
             "Prix unitaire : de " + formatNumber(result.unitMin, false) + " à " + formatNumber(result.unitMax, false) + "\n" +
             "Superficie : " + formatNumber(area, false) + " " + unit + "\n" +
             "Valeur totale : de " + formatNumber(result.totalMin, false) + " à " + formatNumber(result.totalMax, false) + " DZD\n" +
